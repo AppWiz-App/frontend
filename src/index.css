@@ -16,3 +16,49 @@
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
+
+.file-upload-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 50px;
+}
+
+.upload-box {
+  width: 90%;
+  height: 30rem;
+  border: 2px dashed lightgray;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 8px;
+  position: relative;
+}
+
+.upload-box.drag-active {
+  border-color: blue;
+}
+
+.upload-content {
+  text-align: center;
+  color: gray;
+}
+
+.upload-content i {
+  font-size: 48px;
+  margin-bottom: 10px;
+}
+
+.next-button {
+  margin-top: 50px;
+  background-color: black;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
+}
+
+.next-button:hover {
+  background-color: darkgray;
+}
