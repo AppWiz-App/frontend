@@ -28,7 +28,6 @@ const Upload = ({ onUpload }: UploadProps) => {
           </div>
         </label>
       </div>
-      <button className="next-button">Next</button>
     </div>
   );
 };

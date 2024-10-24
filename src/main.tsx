@@ -8,6 +8,7 @@ import {
 import Root from './routes/Root';
 import ErrorPage from './ErrorPage';
 import Upload from './routes/Upload';
+import { NewApplicationCycle } from './routes/NewApplicationCycle';
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
   {
     path: '/upload',
     element: <Upload onUpload={(file) => console.log('File uploaded:', file)} />,
+  },
+  {
+    path: '/new-cycle',
+    element: <NewApplicationCycle />,
   },
 ]);
 
