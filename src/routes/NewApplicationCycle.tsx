@@ -13,8 +13,30 @@ const STEPS = [
   },
 ];
 
+type FormState = {
+  applicantCount: 0,
+  reviewers: [
+    {name: '', email: ''},
+  ],
+  customizations: {
+    name: '',
+    reviewersPerApp: 0
+  }
+}
+
+function onCsvUpload(file: File) {
+  console.log('File uploaded:', file);
+  // sets form state
+}
+
+function setReviewers(newReviewers) {
+  // sets reviewers in form state
+  setFormState(prev => ({...formState, reviewers: newReviewers}))
+}
+
 export function NewApplicationCycle() {
   const [activeStep, setActiveStep] = useState<number>(0);
+  const [formState, setFormState] = useState({});
 
   return (
     <div>
@@ -31,7 +53,7 @@ export function NewApplicationCycle() {
         ))}
       </div>
       <div>
-        {activeStep === 0 && (<Upload onUpload={(file) => console.log('File uploaded:', file)} />)}
+        {activeStep === 0 && (<Upload onUpload={onCsvUpload} />)}
       </div>
       <div><button className="next-button" onClick={() => setActiveStep(prev => prev + 1)}>Next</button></div>
     </div>
