@@ -32,7 +32,7 @@ const INITIAL_FORM_STATE: FormState = {
   reviewers: [],
   customizations: {
     name: '',
-    reviewersPerApp: 0
+    reviewersPerApp: 3
   },
   // metadata
   _applicantCount: 0,
@@ -59,14 +59,15 @@ export function NewApplicationCycle() {
       <div>
         {activeStep === 0 && (<Upload onUpload={onCsvUpload} />)}
         {activeStep === 1 && (<ReviewerEditor formState={formState} setReviewers={setReviewers} />)}
-        {activeStep === 2 && (<Customization formState={formState} />)} 
+        {activeStep === 2 && (<Customization formState={formState} setFormState={setFormState} />)} 
       </div>
       <div><button className="next-button" onClick={() => setActiveStep(prev => prev + 1)}>Next</button></div>
     </div>
   );
 
   function onCsvUpload(data: Record<string, string>[]) {
-    setFormState(prev => ({...prev, applicationCount: data.length}));
+    console.log(data.length)
+    setFormState(prev => ({...prev, _applicantCount: data.length}));
   }
   
   function setReviewers(newReviewers) {
