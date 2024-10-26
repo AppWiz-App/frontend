@@ -16,7 +16,6 @@ const STEPS = [
 ];
 
 type FormState = {
-  applicantCount: number,
   reviewers: {
     name: string, 
     email: string
@@ -24,33 +23,24 @@ type FormState = {
   customizations: {
     name: string,
     reviewersPerApp: number
-  }
+  },
+  // metadata
+  _applicantCount: number,
 }
 
-let formState: FormState = {
-  applicantCount: 0,
+const INITIAL_FORM_STATE: FormState = {
   reviewers: [],
   customizations: {
     name: '',
     reviewersPerApp: 0
-  }
+  },
+  // metadata
+  _applicantCount: 0,
 };
-
-function onCsvUpload(data: Record<string, any>[]) {
-  console.log('File uploaded:', data);
-  // sets form state
-  formState.applicantCount = data.length;
-  console.log('Number of rows:', formState.applicantCount);
-}
-
-function setReviewers(newReviewers) {
-  // sets reviewers in form state
-  setFormState(prev => ({...formState, reviewers: newReviewers}))
-}
 
 export function NewApplicationCycle() {
   const [activeStep, setActiveStep] = useState<number>(0);
-  const [formState, setFormState] = useState({});
+  const [formState, setFormState] = useState<FormState>(INITIAL_FORM_STATE);
 
   return (
     <div>
@@ -68,10 +58,19 @@ export function NewApplicationCycle() {
       </div>
       <div>
         {activeStep === 0 && (<Upload onUpload={onCsvUpload} />)}
-        {activeStep === 1 && (<ReviewerEditor />)}
-        {activeStep === 2 && (<Customization applicantCount={100}/>)} 
+        {activeStep === 1 && (<ReviewerEditor formState={formState} setReviewers={setReviewers} />)}
+        {activeStep === 2 && (<Customization formState={formState} />)} 
       </div>
       <div><button className="next-button" onClick={() => setActiveStep(prev => prev + 1)}>Next</button></div>
     </div>
   );
+
+  function onCsvUpload(data: Record<string, string>[]) {
+    setFormState(prev => ({...prev, applicationCount: data.length}));
+  }
+  
+  function setReviewers(newReviewers) {
+    // sets reviewers in form state
+    setFormState(prev => ({...prev, reviewers: newReviewers}))
+  }
 }

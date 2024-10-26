@@ -1,7 +1,6 @@
 import { useState } from 'react';
-import { v4 as uuidv4 } from 'uuid';
 
-export function Customization({applicantCount}) {
+export function Customization({formState }) {
   const [cycleName, setCycleName] = useState("");
   const [reviewersPerApp, setReviewersPerApp] = useState(0);
 
@@ -20,7 +19,7 @@ export function Customization({applicantCount}) {
         onChange={handleCycleChange}>
       </input>
       <h3 className="page-subheader">Applications</h3>
-      <p className='applications-text'>{applicantCount}</p>
+      <p className='applications-text'>{formState._applicantCount}</p>
       <h3 className="page-subheader">Reviewers Per Application</h3>
       <div className="reviewers-container">
         <button className='minus-button' onClick={decrementReviewersPerApp}>-</button>

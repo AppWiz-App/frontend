@@ -1,8 +1,9 @@
 import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 
-export function ReviewerEditor() {
-  const [reviewers, setReviewers] = useState([]);
+export function ReviewerEditor({formState, setReviewers}) {
+
+  const reviewers = formState.reviewers;
 
   return (
     <div>
