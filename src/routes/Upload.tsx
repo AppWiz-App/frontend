@@ -1,13 +1,23 @@
 import React from 'react';
+import Papa from 'papaparse';
 
 interface UploadProps {
-  onUpload: (file: File) => void;
+  onUpload: (data: Record<string, any>[]) => void;
 }
 
 const Upload = ({ onUpload }: UploadProps) => {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files && event.target.files[0]) {
-      onUpload(event.target.files[0]);
+      Papa.parse(event.target.files[0], {
+        header: true,
+        skipEmptyLines: true,
+        complete: (result) => {
+          onUpload(result.data);
+        },
+        error: (error) => {
+          console.error('Error parsing CSV:', error);
+        },
+      });
     }
   };
 

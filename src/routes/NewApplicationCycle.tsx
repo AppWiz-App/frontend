@@ -14,19 +14,31 @@ const STEPS = [
 ];
 
 type FormState = {
+  applicantCount: number,
+  reviewers: {
+    name: string, 
+    email: string
+  }[],
+  customizations: {
+    name: string,
+    reviewersPerApp: number
+  }
+}
+
+let formState: FormState = {
   applicantCount: 0,
-  reviewers: [
-    {name: '', email: ''},
-  ],
+  reviewers: [],
   customizations: {
     name: '',
     reviewersPerApp: 0
   }
-}
+};
 
-function onCsvUpload(file: File) {
-  console.log('File uploaded:', file);
+function onCsvUpload(data: Record<string, any>[]) {
+  console.log('File uploaded:', data);
   // sets form state
+  formState.applicantCount = data.length;
+  console.log('Number of rows:', formState.applicantCount);
 }
 
 function setReviewers(newReviewers) {
