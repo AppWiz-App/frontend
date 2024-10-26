@@ -8,6 +8,7 @@ import {
 import Root from './routes/Root';
 import ErrorPage from './ErrorPage';
 import Upload from './routes/Upload';
+import { Results } from './routes/Results'
 import { NewApplicationCycle } from './routes/NewApplicationCycle';
 
 const router = createBrowserRouter([
@@ -24,6 +25,10 @@ const router = createBrowserRouter([
     path: '/new-cycle',
     element: <NewApplicationCycle />,
   },
+  {
+    path: '/results',
+    element: <Results />
+  }
 ]);
 
 const rootElement = document.getElementById('root');
