@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import Upload from './Upload';
-import {ReviewerEditor} from '../components/ReviewerEditor';
+import { ReviewerEditor } from '../components/ReviewerEditor';
+import { Customization } from '../components/Customization';
 
 const STEPS = [
   {
@@ -68,6 +69,7 @@ export function NewApplicationCycle() {
       <div>
         {activeStep === 0 && (<Upload onUpload={onCsvUpload} />)}
         {activeStep === 1 && (<ReviewerEditor />)}
+        {activeStep === 2 && (<Customization applicantCount={100}/>)} 
       </div>
       <div><button className="next-button" onClick={() => setActiveStep(prev => prev + 1)}>Next</button></div>
     </div>
