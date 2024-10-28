@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html {
+  font-family: 'Manrope', sans-serif;
+}
+
 .header {
   background-color: #000000;
   display: flex;

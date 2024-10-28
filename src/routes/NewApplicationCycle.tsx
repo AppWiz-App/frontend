@@ -2,8 +2,8 @@ import { useState } from 'react';
 import Upload from './Upload';
 import { ReviewerEditor } from '../components/ReviewerEditor';
 import { Customization } from '../components/Customization';
-import { useNavigate } from "react-router-dom";
-
+import { useNavigate } from 'react-router-dom';
+import { CycleFormTabs } from '../components/CycleFormTabs';
 
 const STEPS = [
   {
@@ -48,18 +48,11 @@ export function NewApplicationCycle() {
 
   return (
     <div>
-      <div className='grid grid-cols-3'>
-        {STEPS.map((step, index) => (
-          <button
-            className={`border bg-black text-white px-4 py-2 ${
-              index === activeStep ? 'font-bold' : ''
-            }`}
-            onClick={() => setActiveStep(index)}
-          >
-            {index + 1} {step.label}
-          </button>
-        ))}
-      </div>
+          <CycleFormTabs
+            steps={STEPS}
+            activeStep={activeStep}
+            setActiveStep={setActiveStep}
+          />
       <div>
         {activeStep === 0 && <Upload onUpload={onCsvUpload} />}
         {activeStep === 1 && (
@@ -80,7 +73,7 @@ export function NewApplicationCycle() {
         ) : (
           <button
             className='next-button'
-            onClick={() => navigate('/results', {state: formState})}
+            onClick={() => navigate('/results', { state: formState })}
           >
             Submit
           </button>
