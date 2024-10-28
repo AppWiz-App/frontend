@@ -2,6 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
+.header {
+  background-color: #000000;
+  display: flex;
+  align-items: center;
+  padding: 20px 32px;
+}
+
 .file-upload-container {
   display: flex;
   flex-direction: column;
