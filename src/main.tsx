@@ -5,6 +5,7 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from 'react-router-dom';
+import Header from './components/Header';
 import Root from './routes/Root';
 import ErrorPage from './ErrorPage';
 import Upload from './routes/Upload';
@@ -35,6 +36,7 @@ const rootElement = document.getElementById('root');
 if (rootElement) {
   createRoot(rootElement).render(
     <StrictMode>
+      <Header />
       <RouterProvider router={router} />
     </StrictMode>
   );
