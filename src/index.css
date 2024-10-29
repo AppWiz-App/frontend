@@ -2,8 +2,13 @@
 @tailwind components;
 @tailwind utilities;
 
-html {
+body {
   font-family: 'Manrope', sans-serif;
+  height: 100dvh;
+}
+
+#root {
+  height: 100%;
 }
 
 .header {
@@ -17,7 +22,7 @@ html {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 50px;
+  flex-grow: 1;
 }
 
 .upload-box {

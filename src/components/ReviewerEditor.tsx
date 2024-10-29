@@ -6,12 +6,12 @@ export function ReviewerEditor({formState, setReviewers}) {
   const reviewers = formState.reviewers;
 
   return (
-    <div>
-      <h3>Reviewers</h3>
+    <div className='flex flex-col gap-2'>
+      <h3 className='text-3xl font-bold'>Reviewers</h3>
       {reviewers.map(({ name, email, id }) => (
         <div key={id} className='flex gap-2'>
           <input
-            className='border'
+            className='border px-2 py-1 rounded bg-slate-50'
             placeholder='Name'
             value={name}
             onChange={(e) => {
@@ -19,7 +19,7 @@ export function ReviewerEditor({formState, setReviewers}) {
             }}
           />
           <input
-            className='border'
+            className='border px-2 py-1 rounded bg-slate-50'
             placeholder='Email'
             value={email}
             onChange={(e) => {

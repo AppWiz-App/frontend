@@ -12,6 +12,12 @@ import Upload from './routes/Upload';
 import { Results } from './routes/Results'
 import { NewApplicationCycle } from './routes/NewApplicationCycle';
 
+import setupLocatorUI from "@locator/runtime";
+
+if (process.env.NODE_ENV === "development") {
+  setupLocatorUI();
+}
+
 const router = createBrowserRouter([
   {
     path: '/',

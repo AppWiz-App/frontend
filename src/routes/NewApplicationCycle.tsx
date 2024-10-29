@@ -31,7 +31,7 @@ type FormState = {
 };
 
 const INITIAL_FORM_STATE: FormState = {
-  reviewers: [],
+  reviewers: [{ name: '', email: '' }],
   customizations: {
     name: '',
     reviewersPerApp: 3,
@@ -48,12 +48,12 @@ export function NewApplicationCycle() {
 
   return (
     <div>
-          <CycleFormTabs
-            steps={STEPS}
-            activeStep={activeStep}
-            setActiveStep={setActiveStep}
-          />
-      <div>
+      <CycleFormTabs
+        steps={STEPS}
+        activeStep={activeStep}
+        setActiveStep={setActiveStep}
+      />
+      <div className='h-full flex justify-center items-center p-16'>
         {activeStep === 0 && <Upload onUpload={onCsvUpload} />}
         {activeStep === 1 && (
           <ReviewerEditor formState={formState} setReviewers={setReviewers} />

@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction } from 'react';
+import { Dispatch, SetStateAction, useRef } from 'react';
 import { RiCheckLine } from '@remixicon/react';
 
 type Step = {
@@ -12,12 +12,18 @@ type Props = {
 };
 
 export function CycleFormTabs({ steps, activeStep, setActiveStep }: Props) {
-  console.log(steps.map(() => '1fr').join('_'));
+  
+  const highestStep = useRef(0);
+  if (activeStep > highestStep.current) {
+    highestStep.current = activeStep;
+  }
+
   return (
     <div className={`h-16 w-full grid [grid-template-columns:1fr_1fr_1fr]`}>
       {steps.map((step, index) => (
         <button
           className={getButtonClassName(index, activeStep)}
+          disabled={index > highestStep.current}
           onClick={() => setActiveStep(index)}
         >
           <StepIndex index={index} activeIndex={activeStep} /> {step.label}
