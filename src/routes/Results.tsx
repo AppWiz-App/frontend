@@ -5,6 +5,7 @@ import TableCell from '@mui/material/TableCell';
 import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
+import Paper from '@mui/material/Paper';
 
 const STATE_STUB = {
   "reviewers": [
@@ -80,16 +81,16 @@ export function Results() {
     newMapping.push(assignments[i]); 
     assignmentMap.push(newMapping);
   }
-  
+
   return (
     <div>
       <h3 className='page-header'>Assignments</h3>
-      <TableContainer>
-        <Table sx={{width: '50%' }} aria-label="simple table">
+      <TableContainer component={Paper} sx={{width: '30%' }} className="table-style">
+        <Table sx={{width: '100%' }} aria-label="simple table">
           <TableHead>
             <TableRow>
-              <TableCell>Reviewers</TableCell>
-              <TableCell align="left">Rows</TableCell>
+              <TableCell><b>Reviewers</b></TableCell>
+              <TableCell align="left"><b>Rows</b></TableCell>
             </TableRow>
           </TableHead>
           <TableBody>
