@@ -1,4 +1,10 @@
 import { useLocation } from 'react-router-dom';
+import Table from '@mui/material/Table';
+import TableBody from '@mui/material/TableBody';
+import TableCell from '@mui/material/TableCell';
+import TableContainer from '@mui/material/TableContainer';
+import TableHead from '@mui/material/TableHead';
+import TableRow from '@mui/material/TableRow';
 
 const STATE_STUB = {
   "reviewers": [
@@ -30,6 +36,7 @@ export function Results() {
   console.log(location);
   const locationState = location.state ?? STATE_STUB
 
+  const reviewers: [] = locationState.reviewers;
   const reviewerCount = locationState.reviewers.length;
   const applicantCount = locationState._applicantCount;
   const reviewersPerApp = locationState.customizations.reviewersPerApp;
@@ -66,22 +73,42 @@ export function Results() {
     
     assignments.push(myAssignments);
   }
-  console.log(ac);
-
-  console.log('ASSIGNMENTS HERE', assignments);
-
+  let assignmentMap = [];
+  for(let i = 0; i < reviewerCount; i++){
+    let newMapping = [];
+    newMapping.push(reviewers[i].name);
+    newMapping.push(assignments[i]); 
+    assignmentMap.push(newMapping);
+  }
+  
   return (
     <div>
-      {assignments.map((assignment, index) => (
-        <>
-        <h3>{locationState.reviewers[index].name}</h3>
-        {assignment.map(range => (<p>
-          {range[0]}{' - '}{range[1]}
-        </p>))}
-        
-        <br />
-        </>
-      ))}
+      <h3 className='page-header'>Assignments</h3>
+      <TableContainer>
+        <Table sx={{width: '50%' }} aria-label="simple table">
+          <TableHead>
+            <TableRow>
+              <TableCell>Reviewers</TableCell>
+              <TableCell align="left">Rows</TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {assignmentMap.map((row) => (
+              <TableRow sx={{ '&:last-child td, &:last-child th': { border: 0 } }}>
+                <TableCell component="th" scope="row">
+                {row[0]}
+                </TableCell>
+                <TableCell align="left">
+                  {row[1][0][0]}-{row[1][0][1]}
+                  {row[1].length > 1 && (
+                    <span> , {row[1][1][0]}-{row[1][1][1]}</span>
+                  )}
+                </TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </div>
   );
 }
