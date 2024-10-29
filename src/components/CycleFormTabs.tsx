@@ -1,4 +1,5 @@
 import { Dispatch, SetStateAction } from 'react';
+import { RiCheckLine } from '@remixicon/react';
 
 type Step = {
   label: string;
@@ -33,7 +34,7 @@ type StepIndexProps = {
 
 function StepIndex({ index, activeIndex }: StepIndexProps) {
   return (
-    <div className={getStepIndexClassName(index, activeIndex)}>{index + 1}</div>
+    <div className={getStepIndexClassName(index, activeIndex)}>{activeIndex > index ? <RiCheckLine /> : index + 1}</div>
   );
 }
 
