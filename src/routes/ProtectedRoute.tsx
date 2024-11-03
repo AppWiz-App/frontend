@@ -1,10 +1,12 @@
 import { Navigate, Outlet } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 
-export function ProtectedRoute() {
+export function ProtectedRoute({ children }: { children: React.ReactNode }) {
   const { session } = useAuth();
 
-  console.log(session);
+  if (!session) {
+    return <Navigate to='/login' replace={true} />;
+  }
 
-  return session ? <Outlet /> : <Navigate to='/login' replace={true} />;
+  return children ? <>{children}</> : <Outlet />;
 }

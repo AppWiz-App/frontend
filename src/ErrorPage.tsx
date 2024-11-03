@@ -8,7 +8,7 @@ export default function ErrorPage() {
       <div className='flex flex-col items-center gap-2'>
         <p>Oops! This page doesn’t exist.</p>
 
-        <Link to='/' className='text-sky-600'>
+        <Link to='/home' className='text-sky-600'>
           Go home
         </Link>
       </div>

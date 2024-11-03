@@ -12,7 +12,9 @@ import Login from './components/Login';
 import setupLocatorUI from '@locator/runtime';
 import { Home } from './routes/Home';
 import { AuthProvider } from './utils/auth/AuthProvider';
-import { ProtectedRoute } from './routes/ProtectedRoute';
+import { Read } from './routes/Read';
+import { Cycle } from './routes/Cycle';
+import { ProtectedBase } from './routes/ProtectedBase';
 
 // for locator-js chrome extension used for debugging
 if (process.env.NODE_ENV === 'development') {
@@ -22,26 +24,33 @@ if (process.env.NODE_ENV === 'development') {
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <ProtectedRoute />,
+    element: <ProtectedBase />,
     errorElement: <ErrorPage />,
     children: [
       {
-        path: '/home',
+        path: 'home',
         element: <Home />,
       },
       {
-        path: '/upload',
-        element: (
-          <Upload onUpload={(file) => console.log('File uploaded:', file)} />
-        ),
-      },
-      {
-        path: '/new-cycle',
+        path: 'new-cycle',
         element: <NewApplicationCycle />,
       },
       {
-        path: '/results',
+        path: 'results',
         element: <Results />,
+      },
+      {
+        path: 'cycle',
+        children: [
+          {
+            path: ':id',
+            element: <Cycle />,
+          },
+          {
+            path: ':id/read',
+            element: <Read />,
+          },
+        ],
       },
     ],
   },
@@ -56,7 +65,6 @@ if (rootElement) {
   createRoot(rootElement).render(
     <StrictMode>
       <AuthProvider>
-        <Header />
         <RouterProvider router={router} />
       </AuthProvider>
     </StrictMode>

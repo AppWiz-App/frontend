@@ -85,7 +85,6 @@ export function NewApplicationCycle() {
   );
 
   function onCsvUpload(data: Record<string, string>[]) {
-    console.log(data.length);
     setFormState((prev) => ({ ...prev, _applicantCount: data.length }));
   }
 

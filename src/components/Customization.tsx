@@ -14,10 +14,6 @@ export function Customization({
     setCycleName(event.target.value);
   };
 
-  console.log(formState._applicantCount);
-  console.log(formState.reviewers);
-  console.log(formState.customizations.reviewersPerApp);
-
   return (
     <div>
       <h3 className='page-header'>Customization</h3>

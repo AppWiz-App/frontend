@@ -12,7 +12,6 @@ const Upload = ({ onUpload }: UploadProps) => {
         header: true,
         skipEmptyLines: true,
         complete: (result) => {
-          console.log(result);
           onUpload(result.data as Record<string, string>[]);
         },
         error: (error) => {
