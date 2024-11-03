@@ -11,6 +11,8 @@ import Login from './components/Login';
 
 import setupLocatorUI from '@locator/runtime';
 import { Home } from './routes/Home';
+import { AuthProvider } from './utils/auth/AuthProvider';
+import { ProtectedRoute } from './routes/ProtectedRoute';
 
 // for locator-js chrome extension used for debugging
 if (process.env.NODE_ENV === 'development') {
@@ -20,22 +22,28 @@ if (process.env.NODE_ENV === 'development') {
 const router = createBrowserRouter([
   {
     path: '/',
-    element: <Home />,
+    element: <ProtectedRoute />,
     errorElement: <ErrorPage />,
-  },
-  {
-    path: '/upload',
-    element: (
-      <Upload onUpload={(file) => console.log('File uploaded:', file)} />
-    ),
-  },
-  {
-    path: '/new-cycle',
-    element: <NewApplicationCycle />,
-  },
-  {
-    path: '/results',
-    element: <Results />,
+    children: [
+      {
+        path: '/home',
+        element: <Home />,
+      },
+      {
+        path: '/upload',
+        element: (
+          <Upload onUpload={(file) => console.log('File uploaded:', file)} />
+        ),
+      },
+      {
+        path: '/new-cycle',
+        element: <NewApplicationCycle />,
+      },
+      {
+        path: '/results',
+        element: <Results />,
+      },
+    ],
   },
   {
     path: '/login',
@@ -47,8 +55,10 @@ const rootElement = document.getElementById('root');
 if (rootElement) {
   createRoot(rootElement).render(
     <StrictMode>
-      <Header />
-      <RouterProvider router={router} />
+      <AuthProvider>
+        <Header />
+        <RouterProvider router={router} />
+      </AuthProvider>
     </StrictMode>
   );
 }
