@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from 'react';
 import { supabase } from '../supabase';
 import { Session, User } from '@supabase/supabase-js';
-import Header from '../../components/Header';
+import Logo from '../../assets/LogoBlack.svg';
 
 export type AuthState = { session: Session | null; user: User | null };
 
@@ -43,12 +43,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 function Loading() {
   return (
-    <div className='h-1/2 flex flex-col justify-center items-center gap-8'>
-      <img src='src/assets/logo_black.svg' />
-
-      <div className='flex flex-col items-center gap-2'>
-        <p>This should only take a few moments...</p>
-      </div>
+    <div className='h-full flex flex-col justify-center items-center gap-8'>
+      <Logo />
     </div>
   );
 }

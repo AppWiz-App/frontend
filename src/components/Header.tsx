@@ -1,11 +1,12 @@
 import { supabase } from '../utils/supabase';
+import Logo from '../assets/LogoWhite.svg';
 
 export default function Header() {
   return (
     <div className='header'>
       <div className='logo'>
         <a href='/home'>
-          <img src='src/assets/logo_white.svg' />
+          <Logo />
         </a>
       </div>
 
