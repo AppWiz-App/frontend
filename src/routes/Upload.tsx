@@ -2,7 +2,7 @@ import React from 'react';
 import Papa from 'papaparse';
 
 interface UploadProps {
-  onUpload: (data: Record<string, any>[]) => void;
+  onUpload: (data: Record<string, string>[]) => void;
 }
 
 const Upload = ({ onUpload }: UploadProps) => {
@@ -12,8 +12,8 @@ const Upload = ({ onUpload }: UploadProps) => {
         header: true,
         skipEmptyLines: true,
         complete: (result) => {
-          console.log(result)
-          onUpload(result.data);
+          console.log(result);
+          onUpload(result.data as Record<string, string>[]);
         },
         error: (error) => {
           console.error('Error parsing CSV:', error);
@@ -23,18 +23,18 @@ const Upload = ({ onUpload }: UploadProps) => {
   };
 
   return (
-    <div className="file-upload-container">
-      <div className="upload-box">
+    <div className='file-upload-container'>
+      <div className='upload-box'>
         <input
-            type="file"
-            accept=".csv"
-            onChange={handleFileChange}
-            style={{ display: 'none' }}
-            id="fileInput"
+          type='file'
+          accept='.csv'
+          onChange={handleFileChange}
+          style={{ display: 'none' }}
+          id='fileInput'
         />
-        <label htmlFor="fileInput">
-          <div className="upload-content">
-            <i className="cloud-icon">☁️</i>
+        <label htmlFor='fileInput'>
+          <div className='upload-content'>
+            <i className='cloud-icon'>☁️</i>
             <p>Upload a CSV of your applications</p>
           </div>
         </label>

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { v4 as uuidv4 } from 'uuid';
 import Upload from './Upload';
 import { ReviewerEditor } from '../components/ReviewerEditor';
 import { Customization } from '../components/Customization';
@@ -17,10 +18,11 @@ const STEPS = [
   },
 ];
 
-type FormState = {
+export type FormState = {
   reviewers: {
     name: string;
     email: string;
+    id: string;
   }[];
   customizations: {
     name: string;
@@ -31,7 +33,7 @@ type FormState = {
 };
 
 const INITIAL_FORM_STATE: FormState = {
-  reviewers: [{ name: '', email: '' }],
+  reviewers: [{ name: '', email: '', id: uuidv4() }],
   customizations: {
     name: '',
     reviewersPerApp: 3,
@@ -87,7 +89,7 @@ export function NewApplicationCycle() {
     setFormState((prev) => ({ ...prev, _applicantCount: data.length }));
   }
 
-  function setReviewers(newReviewers) {
+  function setReviewers(newReviewers: FormState['reviewers']) {
     // sets reviewers in form state
     setFormState((prev) => ({ ...prev, reviewers: newReviewers }));
   }

@@ -1,9 +1,16 @@
-import { useState } from 'react';
+import { ChangeEvent, useState, Dispatch, SetStateAction } from 'react';
+import { FormState } from '../routes/NewApplicationCycle';
 
-export function Customization({ formState, setFormState }) {
+export function Customization({
+  formState,
+  setFormState,
+}: {
+  formState: FormState;
+  setFormState: Dispatch<SetStateAction<FormState>>;
+}) {
   const [cycleName, setCycleName] = useState('');
 
-  const handleCycleChange = (event: any) => {
+  const handleCycleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setCycleName(event.target.value);
   };
 
@@ -28,16 +35,20 @@ export function Customization({ formState, setFormState }) {
         <button className='minus-button' onClick={decrementReviewersPerApp}>
           -
         </button>
-        <p className='reviewers-text'>{formState.customizations.reviewersPerApp}</p>
+        <p className='reviewers-text'>
+          {formState.customizations.reviewersPerApp}
+        </p>
         <button className='plus-button' onClick={incrementReviewersPerApp}>
           +
         </button>
       </div>
       <p className='applications-per-reader-text'>
         Applications per reader:{' '}
-        {Math.ceil((formState._applicantCount *
-          formState.customizations.reviewersPerApp) /
-          formState.reviewers.length)}
+        {Math.ceil(
+          (formState._applicantCount *
+            formState.customizations.reviewersPerApp) /
+            formState.reviewers.length
+        )}
       </p>
     </div>
   );
