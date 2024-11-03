@@ -11,6 +11,7 @@ import ErrorPage from './ErrorPage';
 import Upload from './routes/Upload';
 import { Results } from './routes/Results'
 import { NewApplicationCycle } from './routes/NewApplicationCycle';
+import Login from './components/Login'
 
 import setupLocatorUI from "@locator/runtime";
 
@@ -35,6 +36,10 @@ const router = createBrowserRouter([
   {
     path: '/results',
     element: <Results />
+  },
+  {
+    path: '/login',
+    element: <Login />
   }
 ]);
 
