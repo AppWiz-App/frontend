@@ -4,8 +4,7 @@ export default function Header() {
   return (
     <div className='header'>
       <div className='logo'>
-        {/* FIXME: use react router Link */}
-        <a href='/'>
+        <a href='/home'>
           <img src='src/assets/logo_white.svg' />
         </a>
       </div>
