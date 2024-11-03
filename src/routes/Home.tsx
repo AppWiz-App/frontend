@@ -7,8 +7,10 @@ export function Home() {
 
   return (
     <div>
-      <h1>Home</h1>
-      <p>Home page content</p>
+      <p>session:</p>
+
+      <br />
+
       <p>{JSON.stringify(session)}</p>
     </div>
   );
