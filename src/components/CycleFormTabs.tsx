@@ -1,5 +1,6 @@
 import { Dispatch, SetStateAction, useRef } from 'react';
 import { RiCheckLine } from '@remixicon/react';
+import { appendStyle } from '../utils/appendStyle';
 
 type Step = {
   label: string;
@@ -12,7 +13,6 @@ type Props = {
 };
 
 export function CycleFormTabs({ steps, activeStep, setActiveStep }: Props) {
-  
   const highestStep = useRef(0);
   if (activeStep > highestStep.current) {
     highestStep.current = activeStep;
@@ -40,40 +40,43 @@ type StepIndexProps = {
 
 function StepIndex({ index, activeIndex }: StepIndexProps) {
   return (
-    <div className={getStepIndexClassName(index, activeIndex)}>{activeIndex > index ? <RiCheckLine /> : index + 1}</div>
+    <div className={getStepIndexClassName(index, activeIndex)}>
+      {activeIndex > index ? <RiCheckLine /> : index + 1}
+    </div>
   );
 }
 
 function getStepIndexClassName(index: number, activeIndex: number) {
-  const base =
-    'flex justify-center items-center w-8 h-8 text-white rounded-sm ';
+  const base = 'flex justify-center items-center w-8 h-8 text-white rounded-sm';
 
-    if (index < activeIndex) {
-      return base + 'bg-emerald-500';
-    }
-  
-    if (index === activeIndex) {
-      return base + 'bg-sky-600';
-    }
-  
-    if (index > activeIndex) {
-      return base + 'bg-slate-400'
-    }
+  if (index < activeIndex) {
+    return base + appendStyle('bg-emerald-500');
+  }
+
+  if (index === activeIndex) {
+    return base + appendStyle('bg-sky-600');
+  }
+
+  if (index > activeIndex) {
+    return base + appendStyle('bg-slate-400');
+  }
 }
 
 function getButtonClassName(index: number, activeIndex: number) {
   const base =
-    'flex flex-row justify-center items-center gap-4 h-full bg-slate-100 font-bold transition-all ';
+    'flex flex-row justify-center items-center gap-4 h-full bg-slate-100 font-bold transition-all';
 
   if (index < activeIndex) {
-    return base + 'text-emerald-500';
+    return base + appendStyle('text-emerald-500');
   }
 
   if (index === activeIndex) {
-    return base + 'border-b-4 border-sky-600 bg-white text-sky-600';
+    return (
+      base + appendStyle('border-b-4 border-sky-600 bg-white text-sky-600')
+    );
   }
 
   if (index > activeIndex) {
-    return base + 'text-slate-400'
+    return base + appendStyle('text-slate-400');
   }
 }
