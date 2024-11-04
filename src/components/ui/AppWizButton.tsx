@@ -4,11 +4,18 @@ type ButtonProps = {
   size: 'sm' | 'md';
   variant: 'filled' | 'outlined';
   children?: React.ReactNode;
-};
+} & React.ButtonHTMLAttributes<HTMLButtonElement>;
 
-export function AppWizButton({ size, variant, children }: ButtonProps) {
+export function AppWizButton({
+  size,
+  variant,
+  children,
+  ...buttonProps
+}: ButtonProps) {
   return (
-    <button className={getButtonProps({ size, variant })}>{children}</button>
+    <button className={getButtonProps({ size, variant })} {...buttonProps}>
+      {children}
+    </button>
   );
 }
 

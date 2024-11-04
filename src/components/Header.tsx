@@ -1,13 +1,14 @@
 import { supabase } from '../utils/supabase';
 import Logo from '../assets/LogoWhite.svg';
+import { Link } from 'react-router-dom';
 
 export default function Header() {
   return (
     <div className='header'>
       <div className='logo'>
-        <a href='/home'>
+        <Link to='/home'>
           <Logo />
-        </a>
+        </Link>
       </div>
 
       <button
