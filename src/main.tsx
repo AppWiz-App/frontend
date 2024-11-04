@@ -2,9 +2,7 @@ import { StrictMode } from 'react';
 import { createRoot } from 'react-dom/client';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
-import Header from './components/Header';
 import ErrorPage from './ErrorPage';
-import Upload from './routes/Upload';
 import { Results } from './routes/Results';
 import { NewApplicationCycle } from './routes/NewApplicationCycle';
 import Login from './components/Login';
@@ -64,9 +62,9 @@ const rootElement = document.getElementById('root');
 if (rootElement) {
   createRoot(rootElement).render(
     <StrictMode>
-      {/* <AuthProvider> */}
-      <RouterProvider router={router} />
-      {/* </AuthProvider> */}
+      <AuthProvider>
+        <RouterProvider router={router} />
+      </AuthProvider>
     </StrictMode>
   );
 }
