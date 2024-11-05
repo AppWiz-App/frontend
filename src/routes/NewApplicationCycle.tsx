@@ -7,6 +7,13 @@ import { useNavigate } from 'react-router-dom';
 import { CycleFormTabs } from '../components/CycleFormTabs';
 import { supabase } from '../utils/supabase';
 import { useAuth } from '../hooks/useAuth';
+import { AppWizButton } from '../components/ui/AppWizButton';
+import {
+  RiArrowRightCircleFill,
+  RiArrowRightFill,
+  RiArrowRightLine,
+  RiArrowRightSFill,
+} from '@remixicon/react';
 
 const STEPS = [
   {
@@ -55,9 +62,11 @@ export function NewApplicationCycle() {
     try {
       // need to incorporate custom due date later
       const current_year = new Date().getFullYear();
-      const application_due_date = new Date(`${current_year}-12-31T23:59:59Z`).toISOString();
+      const application_due_date = new Date(
+        `${current_year}-12-31T23:59:59Z`
+      ).toISOString();
       console.log(user);
-      
+
       const { data, error } = await supabase
         .from('ApplicationCycle')
         .insert({
@@ -74,8 +83,7 @@ export function NewApplicationCycle() {
       const new_entry_id = data[0]?.id;
 
       navigate(`/cycle/${new_entry_id}`);
-    } 
-    catch (error) {
+    } catch (error) {
       console.error('Failed to submit the form:', error);
     }
   }
@@ -98,19 +106,20 @@ export function NewApplicationCycle() {
       </div>
       <div>
         {activeStep < 2 ? (
-          <button
-            className='next-button'
+          <AppWizButton
+            className='absolute bottom-4 right-4'
+            icon={<RiArrowRightLine />}
             onClick={() => setActiveStep((prev) => prev + 1)}
           >
             Next
-          </button>
+          </AppWizButton>
         ) : (
-          <button
-            className='next-button'
+          <AppWizButton
+            className='absolute bottom-4 right-4 bg-emerald-500'
             onClick={submitCycle}
           >
             Submit
-          </button>
+          </AppWizButton>
         )}
       </div>
     </div>

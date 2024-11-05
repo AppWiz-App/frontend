@@ -1,5 +1,11 @@
 import { v4 as uuidv4 } from 'uuid';
 import { FormState } from '../routes/NewApplicationCycle';
+import { AppWizButton } from './ui/AppWizButton';
+import {
+  RiCloseCircleFill,
+  RiCloseCircleLine,
+  RiCloseFill,
+} from '@remixicon/react';
 
 export function ReviewerEditor({
   formState,
@@ -31,16 +37,21 @@ export function ReviewerEditor({
               setReviewerById(id, { id, name, email: e.target.value });
             }}
           />
-          <button onClick={() => deleteReviewer(id)}>Remove</button>
+          <AppWizButton
+            size='sm'
+            variant='outlined'
+            icon={<RiCloseFill className='text-slate-600' />}
+            onClick={() => deleteReviewer(id)}
+          />
         </div>
       ))}
-      <button
-        className='bg-black text-white px-4 py-2 rounded'
+
+      <AppWizButton
         disabled={formState.reviewers.length > formState._applicantCount}
         onClick={addReviewer}
       >
-        New Reviewer
-      </button>
+        New reviewer
+      </AppWizButton>
     </div>
   );
 
