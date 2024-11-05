@@ -71,7 +71,7 @@ export function Home() {
       return (
         <CycleContainer>
           {Array.from({ length: 4 }).map(() => (
-            <div className='bg-slate-100 w-full h-52 animation-pulse rounded-lg'></div>
+            <GhostCycleCard />
           ))}
         </CycleContainer>
       );
@@ -89,6 +89,12 @@ export function Home() {
       </CycleContainer>
     );
   }
+}
+
+function GhostCycleCard() {
+  return (
+    <div className='bg-slate-100 w-full h-52 rounded-lg animate-pulse'></div>
+  );
 }
 
 function EmptyState() {
