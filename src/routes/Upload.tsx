@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import Papa from 'papaparse';
 
 interface UploadProps {
@@ -6,12 +6,18 @@ interface UploadProps {
 }
 
 const Upload = ({ onUpload }: UploadProps) => {
+  const [filename, setFilename] = useState<string | null>(null);
+
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    if (event.target.files && event.target.files[0]) {
-      Papa.parse(event.target.files[0], {
+    const file = event.target.files?.[0];
+    if (file) {
+      setFilename(file.name);
+
+      Papa.parse(file, {
         header: true,
         skipEmptyLines: true,
         complete: (result) => {
+          console.log(result);
           onUpload(result.data as Record<string, string>[]);
         },
         error: (error) => {
@@ -23,7 +29,7 @@ const Upload = ({ onUpload }: UploadProps) => {
 
   return (
     <div className='file-upload-container'>
-      <div className='upload-box'>
+      <label htmlFor='fileInput' className='upload-box'>
         <input
           type='file'
           accept='.csv'
@@ -31,13 +37,14 @@ const Upload = ({ onUpload }: UploadProps) => {
           style={{ display: 'none' }}
           id='fileInput'
         />
-        <label htmlFor='fileInput'>
-          <div className='upload-content'>
-            <i className='cloud-icon'>☁️</i>
-            <p>Upload a CSV of your applications</p>
-          </div>
-        </label>
-      </div>
+        <div className='upload-content flex flex-col gap-4'>
+          <i className='cloud-icon'>☁️</i>
+
+          <p>Upload a CSV of your applications</p>
+
+          <b>{filename}</b>
+        </div>
+      </label>
     </div>
   );
 };

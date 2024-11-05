@@ -35,6 +35,7 @@ body {
   align-items: center;
   border-radius: 8px;
   position: relative;
+  cursor: pointer;
 }
 
 .upload-box.drag-active {
