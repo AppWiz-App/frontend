@@ -22,6 +22,7 @@ export function CycleFormTabs({ steps, activeStep, setActiveStep }: Props) {
     <div className={`h-16 w-full grid [grid-template-columns:1fr_1fr_1fr]`}>
       {steps.map((step, index) => (
         <button
+          key={Symbol.for(step.label).toString()}
           className={getButtonClassName(index, activeStep)}
           disabled={index > highestStep.current}
           onClick={() => setActiveStep(index)}
