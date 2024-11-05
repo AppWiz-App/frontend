@@ -70,11 +70,9 @@ export function Home() {
     if (loading) {
       return (
         <CycleContainer>
-          {Array(3)
-            .fill(null)
-            .map(() => (
-              <div className='bg-slate-100 w-full h-52 animation-pulse rounded'></div>
-            ))}
+          {Array.from({ length: 4 }).map(() => (
+            <div className='bg-slate-100 w-full h-52 animation-pulse rounded-lg'></div>
+          ))}
         </CycleContainer>
       );
     }
