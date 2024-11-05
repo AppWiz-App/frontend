@@ -8,10 +8,15 @@ export function Customization({
   formState: FormState;
   setFormState: Dispatch<SetStateAction<FormState>>;
 }) {
-  const [cycleName, setCycleName] = useState('');
-
   const handleCycleChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setCycleName(event.target.value);
+    const newCycleName = event.target.value;
+    setFormState((prev) => ({
+      ...prev,
+      customizations: {
+        ...prev.customizations,
+        name: newCycleName,
+      },
+    }));
   };
 
   return (
@@ -21,7 +26,7 @@ export function Customization({
       <input
         className='input-box'
         placeholder='Enter cycle name'
-        value={cycleName}
+        value={formState.customizations.name}
         onChange={handleCycleChange}
       ></input>
       <h3 className='page-subheader'>Applications</h3>
