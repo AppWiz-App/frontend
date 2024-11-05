@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { FormState } from '../routes/NewApplicationCycle';
 import { AppWizButton } from './ui/AppWizButton';
 import { RiCloseFill } from '@remixicon/react';
+import { AppWizTextInput } from './ui/AppWizTextInput';
 
 export function ReviewerEditor({
   formState,
@@ -17,16 +18,14 @@ export function ReviewerEditor({
       <h3 className='text-3xl font-bold'>Reviewers</h3>
       {reviewers.map(({ name, email, id }) => (
         <div key={id} className='flex gap-2'>
-          <input
-            className='border px-2 py-1 rounded bg-slate-50 w-full'
+          <AppWizTextInput
             placeholder='Name'
             value={name}
             onChange={(e) => {
               setReviewerById(id, { id, name: e.target.value, email });
             }}
           />
-          <input
-            className='border px-2 py-1 rounded bg-slate-50 w-full'
+          <AppWizTextInput
             placeholder='Email'
             value={email}
             onChange={(e) => {

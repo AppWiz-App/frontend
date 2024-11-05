@@ -1,5 +1,7 @@
 import { ChangeEvent, useState, Dispatch, SetStateAction } from 'react';
 import { FormState } from '../routes/NewApplicationCycle';
+import { AppWizButton } from './ui/AppWizButton';
+import { AppWizTextInput } from './ui/AppWizTextInput';
 
 export function Customization({
   formState,
@@ -23,12 +25,12 @@ export function Customization({
     <div>
       <h3 className='page-header'>Customization</h3>
       <h3 className='page-subheader'>Cycle Name</h3>
-      <input
+      <AppWizTextInput
         className='input-box'
         placeholder='Enter cycle name'
         value={formState.customizations.name}
         onChange={handleCycleChange}
-      ></input>
+      />
       <h3 className='page-subheader'>Applications</h3>
       <p className='applications-text'>{formState._applicantCount}</p>
       <h3 className='page-subheader'>Reviewers Per Application</h3>
