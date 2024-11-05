@@ -36,6 +36,7 @@ export function ReviewerEditor({
             size='sm'
             variant='outlined'
             icon={<RiCloseFill className='text-slate-600' />}
+            disabled={reviewers.length === 1}
             onClick={() => deleteReviewer(id)}
           />
         </div>

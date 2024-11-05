@@ -26,7 +26,7 @@ export function Customization({
       <h3 className='page-header'>Customization</h3>
       <h3 className='page-subheader'>Cycle Name</h3>
       <AppWizTextInput
-        className='input-box'
+        className='input-box [border-width:1px_!important]'
         placeholder='Enter cycle name'
         value={formState.customizations.name}
         onChange={handleCycleChange}
@@ -69,7 +69,7 @@ export function Customization({
   }
 
   function decrementReviewersPerApp() {
-    if (formState.customizations.reviewersPerApp > 0) {
+    if (formState.customizations.reviewersPerApp > 1) {
       setFormState((prev) => ({
         ...prev,
         customizations: {

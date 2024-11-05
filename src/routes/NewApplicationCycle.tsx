@@ -117,6 +117,7 @@ export function NewApplicationCycle() {
         ) : (
           <AppWizButton
             className='absolute bottom-4 right-4 bg-emerald-500'
+            disabled={!getCanContinue()}
             onClick={submitCycle}
           >
             Submit

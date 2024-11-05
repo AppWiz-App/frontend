@@ -70,7 +70,7 @@ export function Home() {
     if (loading) {
       return (
         <CycleContainer>
-          {Array.from({ length: 4 }).map(() => (
+          {Array.from({ length: 6 }).map(() => (
             <GhostCycleCard />
           ))}
         </CycleContainer>
@@ -84,7 +84,7 @@ export function Home() {
     return (
       <CycleContainer>
         {cycles.map((cycle) => (
-          <CycleCard cycle={cycle} />
+          <CycleCard key={cycle.id} cycle={cycle} />
         ))}
       </CycleContainer>
     );
