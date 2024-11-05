@@ -109,6 +109,7 @@ export function NewApplicationCycle() {
           <AppWizButton
             className='absolute bottom-4 right-4'
             icon={<RiArrowRightLine />}
+            disabled={!getCanContinue()}
             onClick={() => setActiveStep((prev) => prev + 1)}
           >
             Next
@@ -132,5 +133,24 @@ export function NewApplicationCycle() {
   function setReviewers(newReviewers: FormState['reviewers']) {
     // sets reviewers in form state
     setFormState((prev) => ({ ...prev, reviewers: newReviewers }));
+  }
+
+  function getCanContinue() {
+    if (activeStep === 0) {
+      return formState._applicantCount > 0;
+    }
+
+    if (activeStep === 1) {
+      return (
+        formState.reviewers.length > 0 &&
+        formState.reviewers.every(
+          (reviewer) => reviewer.name.length > 0 && reviewer.email.length > 0
+        )
+      );
+    }
+
+    if (activeStep === 2) {
+      return formState.customizations.name.length;
+    }
   }
 }
