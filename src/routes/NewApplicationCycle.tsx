@@ -5,6 +5,8 @@ import { ReviewerEditor } from '../components/ReviewerEditor';
 import { Customization } from '../components/Customization';
 import { useNavigate } from 'react-router-dom';
 import { CycleFormTabs } from '../components/CycleFormTabs';
+import { supabase } from '../utils/supabase';
+import { useAuth } from '../hooks/useAuth';
 
 const STEPS = [
   {
@@ -47,6 +49,36 @@ export function NewApplicationCycle() {
   const [formState, setFormState] = useState<FormState>(INITIAL_FORM_STATE);
 
   const navigate = useNavigate();
+  const { user } = useAuth();
+
+  async function submitCycle() {
+    try {
+      // need to incorporate custom due date later
+      const current_year = new Date().getFullYear();
+      const application_due_date = new Date(`${current_year}-12-31T23:59:59Z`).toISOString();
+      console.log(user);
+      
+      const { data, error } = await supabase
+        .from('ApplicationCycle')
+        .insert({
+          num_apps: formState._applicantCount,
+          reads_per_application: formState.customizations.reviewersPerApp,
+          due_date: application_due_date,
+          name: formState.customizations.name,
+          created_by_user_id: user?.id,
+        })
+        .select();
+
+      if (error) throw error;
+
+      const new_entry_id = data[0]?.id;
+
+      navigate(`/cycle/${new_entry_id}`);
+    } 
+    catch (error) {
+      console.error('Failed to submit the form:', error);
+    }
+  }
 
   return (
     <div>
@@ -75,7 +107,7 @@ export function NewApplicationCycle() {
         ) : (
           <button
             className='next-button'
-            onClick={() => navigate('/results', { state: formState })}
+            onClick={submitCycle}
           >
             Submit
           </button>
