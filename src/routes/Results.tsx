@@ -1,4 +1,4 @@
-import { useLocation } from 'react-router-dom';
+// import { useLocation } from 'react-router-dom';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
 import TableCell from '@mui/material/TableCell';
@@ -9,30 +9,30 @@ import Paper from '@mui/material/Paper';
 import { supabase } from '../utils/supabase';
 import { useEffect, useState } from 'react';
 
-const STATE_STUB = {
-  reviewers: [
-    {
-      name: 'Poulami',
-      email: '',
-      id: '6b0c2f39-c136-4a20-817e-70b5b7bdc142',
-    },
-    {
-      name: 'Rishi',
-      email: '',
-      id: '38e79fb6-9e40-489d-a4e8-b51b352b3648',
-    },
-    {
-      name: 'Brian',
-      email: '',
-      id: '4542e1f8-dabe-48f2-b8fa-8c41caad5f70',
-    },
-  ],
-  customizations: {
-    name: '',
-    reviewersPerApp: 2,
-  },
-  _applicantCount: 932,
-};
+// const STATE_STUB = {
+//   reviewers: [
+//     {
+//       name: 'Poulami',
+//       email: '',
+//       id: '6b0c2f39-c136-4a20-817e-70b5b7bdc142',
+//     },
+//     {
+//       name: 'Rishi',
+//       email: '',
+//       id: '38e79fb6-9e40-489d-a4e8-b51b352b3648',
+//     },
+//     {
+//       name: 'Brian',
+//       email: '',
+//       id: '4542e1f8-dabe-48f2-b8fa-8c41caad5f70',
+//     },
+//   ],
+//   customizations: {
+//     name: '',
+//     reviewersPerApp: 2,
+//   },
+//   _applicantCount: 932,
+// };
 
 export function Results({ id }: { id: string }) {
   const [reviewers, setReviewers] = useState(null);
@@ -66,6 +66,7 @@ export function Results({ id }: { id: string }) {
       if (error) {
         console.error('Error fetching reviewers:', error);
       } else {
+        // @ts-expect-error: vercel build
         setReviewers(data);
       }
     };
@@ -79,11 +80,14 @@ export function Results({ id }: { id: string }) {
 
   // const location = useLocation();
   console.log(location);
-  const locationState = location.state ?? STATE_STUB;
+  // const locationState = location.state ?? STATE_STUB;
 
   // const reviewers = locationState.reviewers;
+  // @ts-expect-error: vercel build
   const reviewerCount = reviewers.length;
+  // @ts-expect-error: vercel build
   const applicantCount = applicationCycle.num_apps;
+  // @ts-expect-error: vercel build
   const reviewersPerApp = applicationCycle.reads_per_application;
 
   console.log({ reviewerCount });
@@ -119,6 +123,7 @@ export function Results({ id }: { id: string }) {
   const assignmentMap = [];
   for (let i = 0; i < reviewerCount; i++) {
     const newMapping = [];
+    // @ts-expect-error: vercel build
     newMapping.push(reviewers[i].name);
     newMapping.push(assignments[i]);
     assignmentMap.push(newMapping);

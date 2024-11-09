@@ -3,13 +3,14 @@ import { FormState } from '../routes/NewApplicationCycle';
 import { AppWizButton } from './ui/AppWizButton';
 import { RiCloseFill } from '@remixicon/react';
 import { AppWizTextInput } from './ui/AppWizTextInput';
+import { Dispatch, SetStateAction } from 'react';
 
 export function ReviewerEditor({
   formState,
   setReviewers,
 }: {
   formState: FormState;
-  setReviewers: (newReviewers: FormState['reviewers']) => void;
+  setReviewers: Dispatch<SetStateAction<FormState['reviewers']>>;
 }) {
   const reviewers = formState.reviewers;
 

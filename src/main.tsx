@@ -3,7 +3,6 @@ import { createRoot } from 'react-dom/client';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import ErrorPage from './ErrorPage';
-import { Results } from './routes/Results';
 import { NewApplicationCycle } from './routes/NewApplicationCycle';
 import Login from './components/Login';
 
@@ -32,10 +31,6 @@ const router = createBrowserRouter([
       {
         path: 'new-cycle',
         element: <NewApplicationCycle />,
-      },
-      {
-        path: 'results',
-        element: <Results />,
       },
       {
         path: 'cycle',

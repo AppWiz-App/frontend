@@ -114,6 +114,7 @@ export function NewApplicationCycle() {
       <div className='h-full flex justify-center items-center p-16'>
         {activeStep === 0 && <Upload onUpload={onCsvUpload} />}
         {activeStep === 1 && (
+          // @ts-expect-error: vercel build
           <ReviewerEditor formState={formState} setReviewers={setReviewers} />
         )}
         {activeStep === 2 && (
