@@ -6,6 +6,8 @@ import TableContainer from '@mui/material/TableContainer';
 import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
+import { supabase } from '../utils/supabase';
+import { useEffect, useState } from 'react';
 
 const STATE_STUB = {
   reviewers: [
@@ -32,15 +34,57 @@ const STATE_STUB = {
   _applicantCount: 932,
 };
 
-export function Results() {
-  const location = useLocation();
+export function Results({ id }: { id: string }) {
+  const [reviewers, setReviewers] = useState(null);
+  const [applicationCycle, setApplicationCycle] = useState(null);
+
+  useEffect(() => {
+    const fetchApplicationCycle = async () => {
+      const { data, error } = await supabase
+        .from('ApplicationCycle')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error) {
+        console.error('Error fetching application cycle:', error);
+      } else {
+        setApplicationCycle(data);
+      }
+    };
+
+    fetchApplicationCycle();
+  }, [id]);
+
+  useEffect(() => {
+    const fetchReviewers = async () => {
+      const { data, error } = await supabase
+        .from('Reviewer')
+        .select('*')
+        .eq('application_cycle_id', id);
+
+      if (error) {
+        console.error('Error fetching reviewers:', error);
+      } else {
+        setReviewers(data);
+      }
+    };
+
+    fetchReviewers();
+  }, [id]);
+
+  if (!reviewers || !applicationCycle) {
+    return <div>Loading...</div>;
+  }
+
+  // const location = useLocation();
   console.log(location);
   const locationState = location.state ?? STATE_STUB;
 
-  const reviewers = locationState.reviewers;
-  const reviewerCount = locationState.reviewers.length;
-  const applicantCount = locationState._applicantCount;
-  const reviewersPerApp = locationState.customizations.reviewersPerApp;
+  // const reviewers = locationState.reviewers;
+  const reviewerCount = reviewers.length;
+  const applicantCount = applicationCycle.num_apps;
+  const reviewersPerApp = applicationCycle.reads_per_application;
 
   console.log({ reviewerCount });
   console.log({ applicantCount });

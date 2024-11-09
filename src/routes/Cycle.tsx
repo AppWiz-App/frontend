@@ -1,11 +1,16 @@
-import { useParams } from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
+import { Results } from './Results';
 
 export function Cycle() {
   const { id } = useParams();
 
+  if (!id) {
+    return <Navigate to='/home' replace={true} />;
+  }
+
   return (
-    <div>
-      <h1>Cycle id {id}</h1>
+    <div className='p-12'>
+      <Results id={id} />
     </div>
   );
 }

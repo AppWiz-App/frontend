@@ -8,12 +8,7 @@ import { CycleFormTabs } from '../components/CycleFormTabs';
 import { supabase } from '../utils/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { AppWizButton } from '../components/ui/AppWizButton';
-import {
-  RiArrowRightCircleFill,
-  RiArrowRightFill,
-  RiArrowRightLine,
-  RiArrowRightSFill,
-} from '@remixicon/react';
+import { RiArrowRightLine } from '@remixicon/react';
 
 const STEPS = [
   {
@@ -67,7 +62,7 @@ export function NewApplicationCycle() {
       ).toISOString();
       console.log(user);
 
-      const { data, error } = await supabase
+      const { data } = await supabase
         .from('ApplicationCycle')
         .insert({
           num_apps: formState._applicantCount,
@@ -78,9 +73,30 @@ export function NewApplicationCycle() {
         })
         .select();
 
-      if (error) throw error;
+      const new_entry_id = data![0].id;
 
-      const new_entry_id = data[0]?.id;
+      console.log(
+        formState.reviewers.map((reviewer) => ({
+          ...reviewer,
+          application_cycle_id: new_entry_id,
+        }))
+      );
+      const { error } = await supabase
+        .from('Reviewer')
+        .insert(
+          formState.reviewers.map((reviewer) => ({
+            name: reviewer.name,
+            email: reviewer.email,
+            application_cycle_id: new_entry_id,
+          }))
+        )
+        .select();
+
+      console.log(data);
+
+      if (error) {
+        console.error(error);
+      }
 
       navigate(`/cycle/${new_entry_id}`);
     } catch (error) {

@@ -23,7 +23,8 @@ export function Home() {
     const { data, error } = await supabase
       .from('ApplicationCycle')
       .select('*')
-      .eq('created_by_user_id', user?.id);
+      .eq('created_by_user_id', user?.id)
+      .order('created_at', { ascending: false });
     setLoading(false);
 
     if (error) return [];
@@ -111,7 +112,7 @@ function EmptyState() {
 
 function CycleContainer({ children }: { children: React.ReactNode }) {
   return (
-    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4'>
+    <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 auto-cols-fr gap-4'>
       {children}
     </div>
   );
