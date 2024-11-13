@@ -12,6 +12,7 @@ import { AuthProvider } from './utils/auth/AuthProvider';
 import { Read } from './routes/Read';
 import { Cycle } from './routes/Cycle';
 import { ProtectedBase } from './routes/ProtectedBase';
+import { Landing } from './routes/Landing';
 
 // for locator-js chrome extension used for debugging
 if (process.env.NODE_ENV === 'development') {
@@ -19,6 +20,10 @@ if (process.env.NODE_ENV === 'development') {
 }
 
 const router = createBrowserRouter([
+  {
+    path: '/',
+    element: <Landing />,
+  },
   {
     path: '/',
     element: <ProtectedBase />,
