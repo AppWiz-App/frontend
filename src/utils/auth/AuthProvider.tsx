@@ -43,7 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
 function Loading() {
   return (
-    <div className='h-full flex flex-col justify-center items-center gap-8'>
+    <div className='h-full flex flex-col justify-center items-center gap-8 opacity-50'>
       <Logo />
     </div>
   );
