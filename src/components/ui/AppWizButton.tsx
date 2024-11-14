@@ -1,31 +1,36 @@
+import { useNavigate } from 'react-router-dom';
 import { appendStyle } from '../../utils/appendStyle';
 
 type ButtonProps = {
-  size?: 'sm' | 'md';
+  size?: 's' | 'm' | 'l';
   variant?: 'filled' | 'outlined';
   icon?: React.ReactNode;
   iconSide?: 'left' | 'right';
   disabled?: boolean;
   children?: React.ReactNode;
   className?: string;
-} & React.ButtonHTMLAttributes<HTMLButtonElement>;
+} & (
+  | { to: string; onClick?: never }
+  | { to?: never; onClick: React.MouseEventHandler<HTMLButtonElement> }
+) &
+  React.ButtonHTMLAttributes<HTMLButtonElement>;
 
 export function AppWizButton({
-  size = 'md',
+  size = 'm',
   variant = 'filled',
   icon,
   iconSide = 'right',
   disabled = false,
+  to,
+  onClick,
   children,
   className,
   ...restProps
 }: ButtonProps) {
+  const navigate = useNavigate();
+
   return (
-    <button
-      className={getButtonProps() + appendStyle(className)}
-      disabled={disabled}
-      {...restProps}
-    >
+    <button {...getButtonProps()} disabled={disabled} {...restProps}>
       {iconSide === 'left' && icon}
       {children}
       {iconSide === 'right' && icon}
@@ -33,40 +38,52 @@ export function AppWizButton({
   );
 
   function getButtonProps() {
-    let className = 'font-bold rounded flex justify-center items-center gap-2';
+    let style = 'font-bold rounded flex justify-center items-center gap-2';
 
-    if (size == 'sm') {
-      className += appendStyle('h-8 text-sm');
+    if (size == 's') {
+      style += appendStyle('h-8 text-sm');
 
       if (children) {
-        className += appendStyle('py-1 px-2');
+        style += appendStyle('py-1 px-2');
       } else {
-        className += appendStyle('p-1');
+        style += appendStyle('p-1');
       }
     }
-    if (size == 'md') {
-      className += appendStyle('h-12');
+    if (size == 'm') {
+      style += appendStyle('h-12');
 
       if (children) {
-        className += appendStyle('py-2 px-4');
+        style += appendStyle('py-2 px-4');
       } else {
-        className += appendStyle('p-1');
+        style += appendStyle('p-1');
+      }
+    }
+    if (size == 'l') {
+      style += appendStyle('h-20 text-2xl');
+
+      if (children) {
+        style += appendStyle('py-6 px-12');
+      } else {
+        style += appendStyle('p-2');
       }
     }
 
     if (variant === 'filled') {
-      className += appendStyle('bg-black text-white');
+      style += appendStyle('bg-black text-white');
     }
     if (variant === 'outlined') {
-      className += appendStyle(
+      style += appendStyle(
         'bg-slate-100 text-gray-800 border border-slate-300'
       );
     }
 
     if (disabled) {
-      className += appendStyle('opacity-50 cursor-not-allowed');
+      style += appendStyle('opacity-50 cursor-not-allowed');
     }
 
-    return className;
+    return {
+      onClick: onClick ? onClick : () => navigate(to),
+      className: style + appendStyle(className),
+    };
   }
 }

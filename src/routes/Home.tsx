@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { AppWizButton } from '../components/ui/AppWizButton';
 import { RiAddFill, RiContactsBook2Fill } from '@remixicon/react';
 import { useAuth } from '../hooks/useAuth';
@@ -12,7 +11,6 @@ import { RiArrowRightLine } from '@remixicon/react';
 type ApplicationCycle = Database['public']['Tables']['ApplicationCycle']['Row'];
 
 export function Home() {
-  const navigate = useNavigate();
   const { user } = useAuth();
 
   const [cycles, setCycles] = useState<ApplicationCycle[]>([]);
@@ -51,14 +49,7 @@ export function Home() {
           Application cycles
         </h1>
 
-        <AppWizButton
-          variant='filled'
-          size='md'
-          icon={<RiAddFill />}
-          onClick={() => {
-            navigate('/new-cycle');
-          }}
-        >
+        <AppWizButton variant='filled' icon={<RiAddFill />} to={'/new-cycle'}>
           New application cycle
         </AppWizButton>
       </header>
@@ -119,8 +110,6 @@ function CycleContainer({ children }: { children: React.ReactNode }) {
 }
 
 function CycleCard({ cycle }: { cycle: ApplicationCycle }) {
-  const navigate = useNavigate();
-
   return (
     <div className='bg-white border border-slate-300 py-8 px-6 rounded-lg flex flex-col gap-4'>
       <h3 className='text-xl font-bold'>{cycle.name}</h3>
@@ -139,9 +128,7 @@ function CycleCard({ cycle }: { cycle: ApplicationCycle }) {
         variant='outlined'
         icon={<RiArrowRightLine />}
         iconSide='right'
-        onClick={() => {
-          navigate('/cycle/' + cycle.id);
-        }}
+        to={'/cycle/' + cycle.id}
       >
         Open
       </AppWizButton>

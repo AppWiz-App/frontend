@@ -34,7 +34,7 @@ export function ReviewerEditor({
             }}
           />
           <AppWizButton
-            size='sm'
+            size='s'
             variant='outlined'
             icon={<RiCloseFill className='text-slate-600' />}
             disabled={reviewers.length === 1}
