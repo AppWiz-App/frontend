@@ -2,6 +2,7 @@ import { Link, Navigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
 import { AppWizButton } from '../components/ui/AppWizButton';
 import Logo from '../assets/LogoBlack.svg';
+import LogoWhite from '../assets/LogoWhite.svg';
 
 export function Landing() {
   const { session } = useAuth();
@@ -67,6 +68,32 @@ function Hero() {
         <div className='w-96 h-96 bg-slate-100 rounded-lg'></div>
         <div className='w-96 h-96 bg-slate-100 rounded-lg'></div>
       </div>
+
+      <Footer />
     </div>
+  );
+}
+
+function Footer() {
+  return (
+    <footer className='w-full h-40 p-8 mt-36 bg-black flex justify-center items-center'>
+      <div className='w-full [max-width:1100px] flex flex-col gap-6'>
+        <LogoWhite />
+
+        <div className='flex justify-between text-sm'>
+          <div className='flex gap-4'>
+            <Link to='/login' className='text-slate-400'>
+              Dashboard
+            </Link>
+
+            <Link to='/login' className='text-slate-400'>
+              Sign in
+            </Link>
+          </div>
+
+          <p className='text-slate-400'>Copyright © 2024</p>
+        </div>
+      </div>
+    </footer>
   );
 }
