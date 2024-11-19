@@ -64,9 +64,39 @@ function Hero() {
       </div>
 
       <div className='flex justify-center gap-4'>
-        <div className='w-96 h-96 bg-slate-100 rounded-lg'></div>
-        <div className='w-96 h-96 bg-slate-100 rounded-lg'></div>
-        <div className='w-96 h-96 bg-slate-100 rounded-lg'></div>
+        <div className='w-96 h-96 py-14 px-12 bg-slate-100 border-2 border-slate-00 rounded-lg flex flex-col justify-between'>
+          <div className='flex flex-col gap-4'>
+            <h4 className='text-5xl font-bold text-slate-400'>1</h4>
+
+            <p className='text-2xl font-bold'>Upload applications</p>
+          </div>
+
+          <p className='text-lg text-slate-700'>
+            Drag and drop your CSV of application data
+          </p>
+        </div>
+        <div className='w-96 h-96 py-14 px-12 bg-slate-100 border-2 border-slate-00 rounded-lg flex flex-col justify-between'>
+          <div className='flex flex-col gap-4'>
+            <h4 className='text-5xl font-bold text-slate-400'>2</h4>
+
+            <p className='text-2xl font-bold'>Customize assignment</p>
+          </div>
+
+          <p className='text-lg text-slate-700'>
+            Drag and drop your CSV of application data
+          </p>
+        </div>
+        <div className='w-96 h-96 py-14 px-12 bg-slate-100 border-2 border-slate-00 rounded-lg flex flex-col justify-between'>
+          <div className='flex flex-col gap-4'>
+            <h4 className='text-5xl font-bold text-slate-400'>3</h4>
+
+            <p className='text-2xl font-bold'>View results</p>
+          </div>
+
+          <p className='text-lg text-slate-700'>
+            Drag and drop your CSV of application data
+          </p>
+        </div>
       </div>
 
       <Footer />
