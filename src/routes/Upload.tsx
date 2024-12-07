@@ -6,24 +6,6 @@ interface UploadProps {
 }
 
 const Upload = ({ onUpload }: UploadProps) => {
-  const [filename, setFilename] = useState<string | null>(null);
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (file) {
-      setFilename(file.name);
-
-      Papa.parse(file, {
-        header: true,
-        skipEmptyLines: true,
-        complete: (result) => {
-          console.log(result);
-          onUpload(result.data as Record<string, string>[]);
-        },
-        error: (error) => {
-          console.error('Error parsing CSV:', error);
-        },
-      });
   const [dragOver, setDragOver] = useState(false);
   const [uploadMessage, setUploadMessage] = useState<string | null>(null);
 
@@ -34,11 +16,11 @@ const Upload = ({ onUpload }: UploadProps) => {
       skipEmptyLines: true,
       complete: (result) => {
         onUpload(result.data as Record<string, string>[]);
-        setUploadMessage('CSV file uploaded successfully! ✅');
+        setUploadMessage('File uploaded successfully! ✅');
       },
       error: (error) => {
         console.error('Error parsing CSV:', error);
-        setUploadMessage('Error uploading CSV file. ❌');
+        setUploadMessage('Error uploading file. ❌');
       },
     });
   };
@@ -67,8 +49,13 @@ const Upload = ({ onUpload }: UploadProps) => {
   };
 
   return (
-    <div className='file-upload-container'>
-      <label htmlFor='fileInput' className='upload-box'>
+    <div 
+      className={`file-upload-container ${dragOver ? 'drag-over' : ''}`}
+      onDragOver={handleDragOver}
+      onDragLeave={handleDragLeave}
+      onDrop={handleDrop}
+    >
+      <div className='upload-box'>
         <input
           type='file'
           accept='.csv'
@@ -76,14 +63,18 @@ const Upload = ({ onUpload }: UploadProps) => {
           style={{ display: 'none' }}
           id='fileInput'
         />
-        <div className='upload-content flex flex-col gap-4'>
-          <i className='cloud-icon'>☁️</i>
-
-          <p>Upload a CSV of your applications</p>
-
-          <b>{filename}</b>
+        <label htmlFor='fileInput'>
+          <div className='upload-content'>
+            <i className='cloud-icon'>☁️</i>
+            <p>Drag and drop a CSV file here, or click to upload</p>
+          </div>
+        </label>
+      </div>
+      {uploadMessage && (
+        <div className={`upload-message ${uploadMessage.includes('Error') ? 'error' : 'success'}`}>
+          {uploadMessage}
         </div>
-      </label>
+      )}
     </div>
   );
 };
