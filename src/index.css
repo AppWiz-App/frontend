@@ -26,6 +26,11 @@ body {
   flex-grow: 1;
 }
 
+.file-upload-container.drag-over {
+  background-color: #f0f8ff;
+  border-color: #007bff;
+}
+
 .upload-box {
   width: 90%;
   height: 30rem;
@@ -50,6 +55,11 @@ body {
 .upload-content i {
   font-size: 48px;
   margin-bottom: 10px;
+}
+
+.upload-content .cloud-icon {
+  font-size: 40px;
+  color: #007bff;
 }
 
 .next-button {

@@ -24,6 +24,45 @@ const Upload = ({ onUpload }: UploadProps) => {
           console.error('Error parsing CSV:', error);
         },
       });
+  const [dragOver, setDragOver] = useState(false);
+  const [uploadMessage, setUploadMessage] = useState<string | null>(null);
+
+  const handleFile = (file: File) => {
+    setUploadMessage(null); // Clear previous messages
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: (result) => {
+        onUpload(result.data as Record<string, string>[]);
+        setUploadMessage('CSV file uploaded successfully! ✅');
+      },
+      error: (error) => {
+        console.error('Error parsing CSV:', error);
+        setUploadMessage('Error uploading CSV file. ❌');
+      },
+    });
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setDragOver(true);
+  };
+
+  const handleDragLeave = () => {
+    setDragOver(false);
+  };
+
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    setDragOver(false);
+    if (event.dataTransfer.files && event.dataTransfer.files[0]) {
+      handleFile(event.dataTransfer.files[0]);
+    }
+  };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files && event.target.files[0]) {
+      handleFile(event.target.files[0]);
     }
   };
 
