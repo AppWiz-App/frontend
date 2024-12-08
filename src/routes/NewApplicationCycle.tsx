@@ -34,6 +34,7 @@ export type FormState = {
   };
   // metadata
   _applicantCount: number;
+  _csvRows: Record<string, string>[];
 };
 
 const INITIAL_FORM_STATE: FormState = {
@@ -44,6 +45,7 @@ const INITIAL_FORM_STATE: FormState = {
   },
   // metadata
   _applicantCount: 0,
+  _csvRows: [],
 };
 
 export function NewApplicationCycle() {
@@ -62,7 +64,7 @@ export function NewApplicationCycle() {
       ).toISOString();
       console.log(user);
 
-      const { data } = await supabase
+      const { data: cycleData, error: cycleError } = await supabase
         .from('ApplicationCycle')
         .insert({
           num_apps: formState._applicantCount,
@@ -73,32 +75,44 @@ export function NewApplicationCycle() {
         })
         .select();
 
-      const new_entry_id = data![0].id;
+      if (cycleError) {
+        console.error('Failed to create application cycle:', cycleError);
+        return;
+      }
 
-      console.log(
-        formState.reviewers.map((reviewer) => ({
-          ...reviewer,
-          application_cycle_id: new_entry_id,
-        }))
-      );
-      const { error } = await supabase
+      const new_cycle_id = cycleData![0].id;
+
+      const { error: reviewerError } = await supabase
         .from('Reviewer')
         .insert(
           formState.reviewers.map((reviewer) => ({
             name: reviewer.name,
             email: reviewer.email,
-            application_cycle_id: new_entry_id,
+            application_cycle_id: new_cycle_id,
           }))
-        )
-        .select();
+        );
 
-      console.log(data);
-
-      if (error) {
-        console.error(error);
+      if (reviewerError) {
+        console.error('Failed to insert reviewers:', reviewerError);
+        return;
       }
 
-      navigate(`/cycle/${new_entry_id}`);
+      const { error: applicationError } = await supabase
+        .from('Application')
+        .insert(
+          formState._csvRows.map((row) => ({
+            app_data: row,
+            application_cycle_id: new_cycle_id,
+          }))
+        );
+
+      if (applicationError) {
+        console.error('Failed to insert applications:', applicationError);
+        return;
+      }
+
+      console.log('Cycle and applications created successfully');
+      navigate(`/cycle/${new_cycle_id}`);
     } catch (error) {
       console.error('Failed to submit the form:', error);
     }
@@ -145,8 +159,12 @@ export function NewApplicationCycle() {
   );
 
   function onCsvUpload(data: Record<string, string>[]) {
-    setFormState((prev) => ({ ...prev, _applicantCount: data.length }));
-  }
+    setFormState((prev) => {
+        const updatedState = { ...prev, _applicantCount: data.length, _csvRows: data };
+        //console.log(updatedState._csvRows);
+        return updatedState;
+    });
+}
 
   function setReviewers(newReviewers: FormState['reviewers']) {
     // sets reviewers in form state
