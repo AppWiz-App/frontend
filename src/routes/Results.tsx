@@ -7,6 +7,7 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { supabase } from '../utils/supabase';
+import { useAuth } from '../hooks/useAuth';
 import { useEffect, useState } from 'react';
 
 // const STATE_STUB = {
@@ -36,7 +37,9 @@ import { useEffect, useState } from 'react';
 
 export function Results({ id }: { id: string }) {
   const [reviewers, setReviewers] = useState(null);
+  const [appData, setAppData] = useState(null);
   const [applicationCycle, setApplicationCycle] = useState(null);
+  const { user } = useAuth();
 
   useEffect(() => {
     const fetchApplicationCycle = async () => {
@@ -74,6 +77,29 @@ export function Results({ id }: { id: string }) {
     fetchReviewers();
   }, [id]);
 
+
+  useEffect(() => {
+    const fetchAppData = async () => {
+      const { data, error } = await supabase
+        .from('Application')
+        .select('app_data')
+        .eq('application_cycle_id', id);
+
+      if (error) {
+        console.error('Error fetching reviewers:', error);
+      } else {
+        // @ts-expect-error: vercel build
+        setAppData(data);
+      }
+    };
+
+    fetchAppData();
+  }, [id]);
+
+  console.log("app data: ", appData);
+
+  
+
   if (!reviewers || !applicationCycle) {
     return <div>Loading...</div>;
   }
@@ -109,7 +135,7 @@ export function Results({ id }: { id: string }) {
     myAssignments.push([ac, Math.min(applicantCount - 1, maxApp)]);
 
     if (maxApp > applicantCount - 1 && i !== reviewerCount - 1) {
-      myAssignments.push([0, maxApp - applicantCount]);
+      myAssignments.push([0, maxApp - applicantCount]); 
       ac = maxApp - applicantCount + 1;
     } else if (maxApp === applicantCount - 1) {
       ac = 0;
@@ -121,6 +147,30 @@ export function Results({ id }: { id: string }) {
     assignments.push(myAssignments);
   }
   const assignmentMap = [];
+
+async function insertData() {    
+  
+  // const { data, error } = await supabase
+  //   .from('Reviewer_Application')
+  //   .insert([
+  //     { TestColumn: 1 },
+  //   ])
+  //   .select()
+            
+        
+  /*
+  const { data, error } = await supabase
+  .from('Reviewer_Application')
+  .insert({
+    reviewer_id: 1,
+    application_iddue_date: 1,
+  })
+  .select();
+  */
+}
+
+insertData();
+        
   for (let i = 0; i < reviewerCount; i++) {
     const newMapping = [];
     // @ts-expect-error: vercel build
