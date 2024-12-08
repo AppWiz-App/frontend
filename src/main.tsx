@@ -45,7 +45,7 @@ const router = createBrowserRouter([
             element: <Cycle />,
           },
           {
-            path: ':id/read',
+            path: ':id/read/:reviewerId',
             element: <Read />,
           },
         ],
