@@ -1,5 +1,6 @@
 import { Navigate, useParams } from 'react-router-dom';
 import { Results } from './Results';
+import { Ranking } from './Ranking';
 import { AppWizButton } from '../components/ui/AppWizButton';
 import '../index.css';
 import { useEffect, useState } from 'react';
@@ -128,9 +129,10 @@ export function Cycle() {
             })}
           </ul>
         </div>
-
+        
         <div>
-          <h3 className='page-header'>Applicant ranking</h3>
+          <Ranking id={cycleId}/>
+          <h3 className='page-header'>Applicant Ranking</h3>
           <ul className='pl-8'>
             {reviewers?.map((reviewer) => {
               return <li key={reviewer.id}>{reviewer.name}</li>;

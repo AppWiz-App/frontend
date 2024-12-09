@@ -35,7 +35,7 @@ import { useEffect, useState } from 'react';
 //   _applicantCount: 932,
 // };
 
-export function Results({ id }: { id: string }) {
+export function Results() {
   return null;
   const [reviewers, setReviewers] = useState(null);
   const [applications, setApplications] = useState(null);
