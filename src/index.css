@@ -174,3 +174,29 @@ body {
   margin-top: 20px;
   font-size: 30px;
 }
+
+.supabase-auth-ui_ui-input {
+  border-color: #ccd5e1 !important;
+  border-radius: 4px !important;
+  padding: 4px 8px !important;
+
+  &::placeholder {
+    color: #485569 !important;
+  }
+}
+
+.supabase-auth-ui_ui-label {
+  font-weight: bold !important;
+  margin: 8px 0px !important;
+}
+
+.supabase-auth-ui_ui-button {
+  background: black !important;
+  color: white !important;
+  border-radius: 4px !important;
+  padding: 8px !important;
+}
+
+.supabase-auth-ui_ui-anchor {
+  color: #485569 !important;
+}

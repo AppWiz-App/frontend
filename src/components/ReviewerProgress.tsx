@@ -10,13 +10,6 @@ export function ReviewerProgress() {
     return <Loading />;
   }
 
-  console.log({ reviewers, ratings, assignments });
-
-  console.log(
-    'RIGHT HERE',
-    Map.groupBy(assignments, ({ reviewer_id }) => reviewer_id)
-  );
-
   const reviewerProgress = reviewers.reduce((acc, reviewer) => {
     const totalAssignments = assignments.filter(
       (assignment) => assignment.reviewer_id === reviewer.id
@@ -40,7 +33,7 @@ export function ReviewerProgress() {
   const sortedReviewerProgress = Object.values(reviewerProgress).sort(
     (a, b) => {
       if (
-        a.completedAssignments / a.totalAssignments <
+        a.completedAssignments / a.totalAssignments >
         b.completedAssignments / b.totalAssignments
       )
         return -1;
