@@ -118,6 +118,7 @@ export function Read() {
   if (
     !applicationCycle ||
     !reviewer ||
+    assignedCount === undefined ||
     activeApplicationIndex === undefined ||
     !applications ||
     ratings === undefined
@@ -207,7 +208,7 @@ export function Read() {
               size='m'
               disabled={activeApplicationRating === undefined}
             >
-              Save and next
+              Save{activeApplicationIndex < assignedCount && ' and next'}
             </AppWizButton>
           </div>
         </div>
@@ -217,7 +218,7 @@ export function Read() {
           max={assignedCount}
           className='w-full h-4 bg-gray-200 rounded'
         >
-          <Progress.Indicator className='bg-slate-600 h-full' />
+          <Progress.Indicator className='bg-slate-600 h-full rounded' />
         </Progress.Root>
       </div>
     </div>
@@ -225,5 +226,9 @@ export function Read() {
 
   function onRatingChange(rating: number, applicationId: number) {
     setRatings((prev) => ({ ...prev, [applicationId]: { numeric: rating } }));
+  }
+
+  function onSaveAndNext() {
+    // todo: post the ratings state to the backend
   }
 }
