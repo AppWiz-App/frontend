@@ -1,6 +1,6 @@
 import { Navigate, useParams } from 'react-router-dom';
 import { Results } from './Results';
-import { Ranking } from './Ranking';
+import { Ranking } from '../components/Ranking';
 import { AppWizButton } from '../components/ui/AppWizButton';
 import '../index.css';
 import { useEffect, useState } from 'react';

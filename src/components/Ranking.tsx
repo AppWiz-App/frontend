@@ -10,7 +10,7 @@ import Paper from '@mui/material/Paper';
 import { useContext, useEffect, useState } from 'react';
 
 import { CycleContext, CycleState } from '../utils/CycleProvider';
-import { Loading } from '../components/Loading';
+import { Loading } from './Loading';
 
 // export const Ranking = ({ id }: { id: string }) => {
 //   const [reviewers, setReviewers] = useState(null);
@@ -90,13 +90,6 @@ import { Loading } from '../components/Loading';
 
 export function Ranking() {
   const { ratings, applications } = useContext(CycleContext);
-  // console.log(
-  //   'HEREEEEE',
-  //   applicationCycle,
-  //   reviewers,
-  //   { ratings },
-  //   applications
-  // );
 
   const applicantScores = new Map<number, { total: number; count: number }>();
 
