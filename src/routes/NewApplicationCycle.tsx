@@ -8,8 +8,7 @@ import { CycleFormTabs } from '../components/CycleFormTabs';
 import { supabase } from '../utils/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { AppWizButton } from '../components/ui/AppWizButton';
-import { RiArrowRightLine } from '@remixicon/react';
-
+import { RiArrowRightLine, RiLoader2Line } from '@remixicon/react';
 
 const STEPS = [
   {
@@ -52,6 +51,7 @@ const INITIAL_FORM_STATE: FormState = {
 export function NewApplicationCycle() {
   const [activeStep, setActiveStep] = useState<number>(0);
   const [formState, setFormState] = useState<FormState>(INITIAL_FORM_STATE);
+  const [loading, setLoading] = useState<boolean>(false);
 
   const navigate = useNavigate();
   const { user } = useAuth();
@@ -75,7 +75,7 @@ export function NewApplicationCycle() {
           created_by_user_id: user?.id,
         })
         .select('*');
-        console.log({cycleData})
+      console.log({ cycleData });
 
       if (cycleError) {
         console.error('Failed to create application cycle:', cycleError);
@@ -92,8 +92,9 @@ export function NewApplicationCycle() {
             email: reviewer.email,
             application_cycle_id: new_cycle_id,
           }))
-        ).select('*');
-        console.log({reviewerData})
+        )
+        .select('*');
+      console.log({ reviewerData });
 
       if (reviewerError) {
         console.error('Failed to insert reviewers:', reviewerError);
@@ -109,9 +110,10 @@ export function NewApplicationCycle() {
             app_data: row,
             application_cycle_id: new_cycle_id,
           }))
-        ).select('*');
+        )
+        .select('*');
 
-        console.log({applicationData})
+      console.log({ applicationData });
 
       if (applicationError) {
         console.error('Failed to insert applications:', applicationError);
@@ -123,7 +125,7 @@ export function NewApplicationCycle() {
       console.log(reviewerData);
 
       const reviewerCount = reviewerData.length;
-      const applicantCount = cycleData[0].num_apps;    
+      const applicantCount = cycleData[0].num_apps;
       const reviewersPerApp = cycleData[0].reads_per_application;
 
       console.log({ reviewerCount });
@@ -144,12 +146,11 @@ export function NewApplicationCycle() {
               reviewer_id: reviewerId,
               application_id: applicationId,
             });
-            if(error){
-              console.log("ERROR: ", error);
-            }
+          if (error) {
+            console.log('ERROR: ', error);
+          }
           return data; // optional
-        } 
-        catch (error) {
+        } catch (error) {
           console.error('Error inserting reviewer application:', error);
           throw error;
         }
@@ -157,15 +158,15 @@ export function NewApplicationCycle() {
 
       for (let i = 0; i < reviewerCount; i++) {
         const reviewerId = reviewerData[i].id;
-      
+
         const myAssignments = [];
 
         const maxApp = ac + applicationsPerReviewer - 1;
         myAssignments.push([ac, Math.min(applicantCount - 1, maxApp)]);
 
-        for(let j = ac; j <= Math.min(applicantCount - 1, maxApp); j++){
+        for (let j = ac; j <= Math.min(applicantCount - 1, maxApp); j++) {
           const applicationId = applicationData[j].id;
-          console.log("APPLICATION ID: " , applicationId);
+          console.log('APPLICATION ID: ', applicationId);
           assignReviewer(reviewerId, applicationId)
             .then((assignment) => {
               console.log('Reviewer assigned:', assignment);
@@ -176,11 +177,11 @@ export function NewApplicationCycle() {
         }
 
         if (maxApp > applicantCount - 1 && i !== reviewerCount - 1) {
-          console.log("before for loop");
+          console.log('before for loop');
           myAssignments.push([0, maxApp - applicantCount]);
-          for(let j = 0; j <= maxApp - applicantCount; j++){
+          for (let j = 0; j <= maxApp - applicantCount; j++) {
             const applicationId = applicationData[j].id;
-            console.log("APPLICATION ID: " , applicationId);
+            console.log('APPLICATION ID: ', applicationId);
             assignReviewer(reviewerId, applicationId)
               .then((assignment) => {
                 console.log('Reviewer assigned:', assignment);
@@ -189,7 +190,7 @@ export function NewApplicationCycle() {
                 console.error('Error assigning reviewer:', error);
               });
           }
-          console.log("after for loop");
+          console.log('after for loop');
           ac = maxApp - applicantCount + 1;
         } else if (maxApp === applicantCount - 1) {
           ac = 0;
@@ -197,8 +198,6 @@ export function NewApplicationCycle() {
           ac += applicationsPerReviewer;
         }
       }
-      
-        
 
       // console.log("application data: ", applicationData);
 
@@ -209,7 +208,7 @@ export function NewApplicationCycle() {
       //       .from('Reviewer')
       //       .select('id')
       //       .eq('application_cycle_id', id);
-    
+
       //     if (error) {
       //       console.error('Error fetching reviewers:', error);
       //     } else {
@@ -217,17 +216,17 @@ export function NewApplicationCycle() {
       //       setReviewers(data);
       //     }
       //   };
-    
+
       //   fetchReviewers();
       // }, [id]);
-    
+
       // useEffect(() => {
       //   const fetchApplications = async () => {
       //     const { data, error } = await supabase
       //       .from('Application')
       //       .select('id')
       //       .eq('application_cycle_id', id);
-    
+
       //     if (error) {
       //       console.error('Error fetching reviewers:', error);
       //     } else {
@@ -235,14 +234,16 @@ export function NewApplicationCycle() {
       //       setApplications(data);
       //     }
       //   };
-    
+
       //   fetchApplications();
       // }, [id]);
 
-      console.log('Cycle and applications created successfully');
-      navigate(`/cycle/${new_cycle_id}`);
+      // wait 2 seconds for our supabase assignments to complete
+      await new Promise((resolve) => setTimeout(resolve, 2000));
+
+      return new_cycle_id;
     } catch (error) {
-      console.error('Failed to submit the form:', error);
+      return Promise.reject(error);
     }
   }
 
@@ -276,8 +277,28 @@ export function NewApplicationCycle() {
         ) : (
           <AppWizButton
             className='absolute bottom-4 right-4 bg-emerald-500'
-            disabled={!getCanContinue()}
-            onClick={submitCycle}
+            disabled={!getCanContinue() || loading}
+            icon={
+              loading ? (
+                <div className='animate-spin	'>
+                  <RiLoader2Line />
+                </div>
+              ) : undefined
+            }
+            iconSide='left'
+            onClick={() => {
+              setLoading(true);
+              submitCycle()
+                .then((new_cycle_id) => {
+                  console.log('Cycle and applications created successfully');
+                  setLoading(false);
+                  navigate(`/cycle/${new_cycle_id}`);
+                })
+                .catch((error) => {
+                  setLoading(false);
+                  console.error('failed', error);
+                });
+            }}
           >
             Submit
           </AppWizButton>
@@ -288,11 +309,15 @@ export function NewApplicationCycle() {
 
   function onCsvUpload(data: Record<string, string>[]) {
     setFormState((prev) => {
-        const updatedState = { ...prev, _applicantCount: data.length, _csvRows: data };
-        //console.log(updatedState._csvRows);
-        return updatedState;
+      const updatedState = {
+        ...prev,
+        _applicantCount: data.length,
+        _csvRows: data,
+      };
+      //console.log(updatedState._csvRows);
+      return updatedState;
     });
-}
+  }
 
   function setReviewers(newReviewers: FormState['reviewers']) {
     // sets reviewers in form state

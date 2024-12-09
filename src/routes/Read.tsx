@@ -1,3 +1,5 @@
+import { v4 as uuidv4 } from 'uuid';
+
 import { useEffect, useState } from 'react';
 
 import { useParams } from 'react-router-dom';
@@ -7,7 +9,8 @@ import {
   RiArrowGoBackLine,
   RiArrowLeftLine,
   RiArrowRightLine,
-  RiHome2Line,
+  RiCheckboxMultipleFill,
+  RiLoader2Line,
 } from '@remixicon/react';
 import * as Progress from '@radix-ui/react-progress';
 
@@ -17,10 +20,11 @@ import { Database } from '../../database.types';
 type ApplicationCycle = Database['public']['Tables']['ApplicationCycle']['Row'];
 type Reviewer = Database['public']['Tables']['Reviewer']['Row'];
 type Application = Database['public']['Tables']['Application']['Row'];
-type Rating = Database['public']['Tables']['Rating']['Insert'];
+// type Rating = Database['public']['Tables']['Rating']['Insert'];
 
 type RatingObj = {
   numeric: number;
+  id: string;
 };
 
 export function Read() {
@@ -35,8 +39,11 @@ export function Read() {
   >();
   const [assignedCount, setAssignedCount] = useState<number | undefined>();
   const [applications, setApplications] = useState<Application[]>();
-  const [ratings, setRatings] =
-    useState<Record<Application['id'], RatingObj>>();
+  const [ratings, setRatings] = useState<Record<Application['id'], RatingObj>>(
+    {}
+  );
+
+  const [isSubmittingRating, setIsSubmittingRating] = useState<boolean>(false);
 
   useEffect(() => {
     (async () => {
@@ -74,7 +81,7 @@ export function Read() {
       } else {
         console.log({ ratingData });
         const ratingRecord = ratingData.reduce((acc, rating) => {
-          acc[rating.application_id] = { numeric: rating.rating };
+          acc[rating.application_id] = { ...rating.rating, id: rating.id };
           return acc;
         }, {});
         setRatings(ratingRecord);
@@ -124,6 +131,10 @@ export function Read() {
     ratings === undefined
   )
     return <Loading />;
+
+  if (activeApplicationIndex >= assignedCount) {
+    return <DoneReading />;
+  }
 
   const activeApplicationRating =
     ratings[applications[activeApplicationIndex].id];
@@ -203,12 +214,24 @@ export function Read() {
             </AppWizButton>
 
             <AppWizButton
-              icon={<RiArrowRightLine />}
-              onClick={() => setActiveApplicationIndex((prev) => prev! + 1)}
+              onClick={onSaveAndNext}
               size='m'
-              disabled={activeApplicationRating === undefined}
+              disabled={
+                !ratings[applications[activeApplicationIndex].id] ||
+                isSubmittingRating
+              }
+              icon={
+                isSubmittingRating ? (
+                  <div className='animate-spin	'>
+                    <RiLoader2Line />
+                  </div>
+                ) : (
+                  <RiArrowRightLine />
+                )
+              }
+              iconSide='right'
             >
-              Save{activeApplicationIndex < assignedCount && ' and next'}
+              Save{activeApplicationIndex < assignedCount - 1 && ' and next'}
             </AppWizButton>
           </div>
         </div>
@@ -225,10 +248,53 @@ export function Read() {
   );
 
   function onRatingChange(rating: number, applicationId: number) {
-    setRatings((prev) => ({ ...prev, [applicationId]: { numeric: rating } }));
+    setRatings((prev) => ({
+      ...prev,
+      [applicationId]: {
+        numeric: rating,
+        id: prev[applicationId]?.id ?? uuidv4(),
+      },
+    }));
   }
 
   function onSaveAndNext() {
+    setIsSubmittingRating(true);
+    (async () => {
+      const rating = ratings[applications[activeApplicationIndex].id];
+      console.log('HERE');
+      console.log({ rating });
+      const { error } = await supabase.from('Rating').upsert({
+        application_id: applications[activeApplicationIndex].id,
+        reviewer_id: reviewerId,
+        rating,
+        id: rating.id,
+      });
+
+      if (error) {
+        console.error('Error saving rating:', error);
+      } else {
+        setActiveApplicationIndex((prev) => prev! + 1);
+      }
+
+      setIsSubmittingRating(false);
+    })();
     // todo: post the ratings state to the backend
+  }
+
+  function DoneReading() {
+    if (!applicationCycle) throw new Error('No application  cycle');
+
+    return (
+      <div className='w-full [height:calc(100vh-72px)] flex flex-col justify-center items-center gap-8'>
+        <div className='flex flex-col text-slate-400 items-center gap-4'>
+          <RiCheckboxMultipleFill size={96} />
+          <h1 className='text-black text-2xl'>You’re all done!</h1>
+        </div>
+
+        <AppWizButton to={`/cycle/${applicationCycle.id}`} variant='filled'>
+          Return to {applicationCycle?.name ?? 'home'}
+        </AppWizButton>
+      </div>
+    );
   }
 }
