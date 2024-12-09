@@ -38,7 +38,7 @@ import { useEffect, useState } from 'react';
 export function Results({ id }: { id: string }) {
   return null;
   const [reviewers, setReviewers] = useState(null);
-  const [appData, setAppData] = useState(null);
+  const [applications, setApplications] = useState(null);
   const [applicationCycle, setApplicationCycle] = useState(null);
   const { user } = useAuth();
 
@@ -64,7 +64,7 @@ export function Results({ id }: { id: string }) {
     const fetchReviewers = async () => {
       const { data, error } = await supabase
         .from('Reviewer')
-        .select('*')
+        .select('id')
         .eq('application_cycle_id', id);
 
       if (error) {
@@ -79,24 +79,28 @@ export function Results({ id }: { id: string }) {
   }, [id]);
 
   useEffect(() => {
-    const fetchAppData = async () => {
+    const fetchApplications = async () => {
       const { data, error } = await supabase
         .from('Application')
-        .select('app_data')
+        .select('id')
         .eq('application_cycle_id', id);
 
       if (error) {
         console.error('Error fetching reviewers:', error);
       } else {
         // @ts-expect-error: vercel build
-        setAppData(data);
+        setApplications(data);
       }
     };
 
-    fetchAppData();
+    fetchApplications();
   }, [id]);
 
-  console.log('app data: ', appData);
+  if (applications === null) return
+
+
+  console.log("reviewers: " , reviewers);  
+  console.log("applications: " , applications);  
 
   if (!reviewers || !applicationCycle) {
     return <div>Loading...</div>;
@@ -126,14 +130,61 @@ export function Results({ id }: { id: string }) {
     (applicantCount * reviewersPerApp) / reviewerCount
   );
 
+  async function assignReviewer(reviewerId, applicationId) {
+    try {
+      const { data, error } = await supabase
+        .from('Reviewer_Application')
+        .insert({
+          reviewer_id: reviewerId,
+          application_id: applicationId,
+        });
+        if(error){
+          console.log("ERROR: ", error);
+        }
+      return data; // optional
+    } 
+    catch (error) {
+      console.error('Error inserting reviewer application:', error);
+      throw error;
+    }
+  }
+
   for (let i = 0; i < reviewerCount; i++) {
+    console.log("ID: ", reviewers[i].id);
+    const reviewerId = reviewers[i].id;
+   
     const myAssignments = [];
 
     const maxApp = ac + applicationsPerReviewer - 1;
     myAssignments.push([ac, Math.min(applicantCount - 1, maxApp)]);
 
+    for(let j = ac; j <= Math.min(applicantCount - 1, maxApp); j++){
+      const applicationId = applications[j].id;
+      console.log("APPLICATION ID: " , applicationId);
+      assignReviewer(reviewerId, applicationId)
+        .then((assignment) => {
+          console.log('Reviewer assigned:', assignment);
+        })
+        .catch((error) => {
+          console.error('Error assigning reviewer:', error);
+        });
+    }
+
     if (maxApp > applicantCount - 1 && i !== reviewerCount - 1) {
+      console.log("before for loop");
       myAssignments.push([0, maxApp - applicantCount]);
+      for(let j = 0; j <= maxApp - applicantCount; j++){
+        const applicationId = applications[j].id;
+        console.log("APPLICATION ID: " , applicationId);
+        assignReviewer(reviewerId, applicationId)
+          .then((assignment) => {
+            console.log('Reviewer assigned:', assignment);
+          })
+          .catch((error) => {
+            console.error('Error assigning reviewer:', error);
+          });
+      }
+      console.log("after for loop");
       ac = maxApp - applicantCount + 1;
     } else if (maxApp === applicantCount - 1) {
       ac = 0;

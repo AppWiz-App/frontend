@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Upload from './Upload';
 import { ReviewerEditor } from '../components/ReviewerEditor';
@@ -9,6 +9,7 @@ import { supabase } from '../utils/supabase';
 import { useAuth } from '../hooks/useAuth';
 import { AppWizButton } from '../components/ui/AppWizButton';
 import { RiArrowRightLine } from '@remixicon/react';
+
 
 const STEPS = [
   {
@@ -73,7 +74,8 @@ export function NewApplicationCycle() {
           name: formState.customizations.name,
           created_by_user_id: user?.id,
         })
-        .select();
+        .select('*');
+        console.log({cycleData})
 
       if (cycleError) {
         console.error('Failed to create application cycle:', cycleError);
@@ -82,7 +84,7 @@ export function NewApplicationCycle() {
 
       const new_cycle_id = cycleData![0].id;
 
-      const { error: reviewerError } = await supabase
+      const { data: reviewerData, error: reviewerError } = await supabase
         .from('Reviewer')
         .insert(
           formState.reviewers.map((reviewer) => ({
@@ -90,26 +92,152 @@ export function NewApplicationCycle() {
             email: reviewer.email,
             application_cycle_id: new_cycle_id,
           }))
-        );
+        ).select('*');
+        console.log({reviewerData})
 
       if (reviewerError) {
         console.error('Failed to insert reviewers:', reviewerError);
         return;
       }
 
-      const { error: applicationError } = await supabase
+      // console.log("reviewer data: ", reviewerData);
+
+      const { data: applicationData, error: applicationError } = await supabase
         .from('Application')
         .insert(
           formState._csvRows.map((row) => ({
             app_data: row,
             application_cycle_id: new_cycle_id,
           }))
-        );
+        ).select('*');
+
+        console.log({applicationData})
 
       if (applicationError) {
         console.error('Failed to insert applications:', applicationError);
         return;
       }
+
+      console.log(cycleData);
+      console.log(applicationData);
+      console.log(reviewerData);
+
+      const reviewerCount = reviewerData.length;
+      const applicantCount = cycleData[0].num_apps;    
+      const reviewersPerApp = cycleData[0].reads_per_application;
+
+      console.log({ reviewerCount });
+      console.log({ applicantCount });
+      console.log({ reviewersPerApp });
+
+      let ac = 0;
+
+      const applicationsPerReviewer = Math.ceil(
+        (applicantCount * reviewersPerApp) / reviewerCount
+      );
+
+      async function assignReviewer(reviewerId, applicationId) {
+        try {
+          const { data, error } = await supabase
+            .from('Reviewer_Application')
+            .insert({
+              reviewer_id: reviewerId,
+              application_id: applicationId,
+            });
+            if(error){
+              console.log("ERROR: ", error);
+            }
+          return data; // optional
+        } 
+        catch (error) {
+          console.error('Error inserting reviewer application:', error);
+          throw error;
+        }
+      }
+
+      for (let i = 0; i < reviewerCount; i++) {
+        const reviewerId = reviewerData[i].id;
+      
+        const myAssignments = [];
+
+        const maxApp = ac + applicationsPerReviewer - 1;
+        myAssignments.push([ac, Math.min(applicantCount - 1, maxApp)]);
+
+        for(let j = ac; j <= Math.min(applicantCount - 1, maxApp); j++){
+          const applicationId = applicationData[j].id;
+          console.log("APPLICATION ID: " , applicationId);
+          assignReviewer(reviewerId, applicationId)
+            .then((assignment) => {
+              console.log('Reviewer assigned:', assignment);
+            })
+            .catch((error) => {
+              console.error('Error assigning reviewer:', error);
+            });
+        }
+
+        if (maxApp > applicantCount - 1 && i !== reviewerCount - 1) {
+          console.log("before for loop");
+          myAssignments.push([0, maxApp - applicantCount]);
+          for(let j = 0; j <= maxApp - applicantCount; j++){
+            const applicationId = applicationData[j].id;
+            console.log("APPLICATION ID: " , applicationId);
+            assignReviewer(reviewerId, applicationId)
+              .then((assignment) => {
+                console.log('Reviewer assigned:', assignment);
+              })
+              .catch((error) => {
+                console.error('Error assigning reviewer:', error);
+              });
+          }
+          console.log("after for loop");
+          ac = maxApp - applicantCount + 1;
+        } else if (maxApp === applicantCount - 1) {
+          ac = 0;
+        } else {
+          ac += applicationsPerReviewer;
+        }
+      }
+      
+        
+
+      // console.log("application data: ", applicationData);
+
+      // linking reviewer id to application id
+      // useEffect(() => {
+      //   const fetchReviewers = async () => {
+      //     const { data, error } = await supabase
+      //       .from('Reviewer')
+      //       .select('id')
+      //       .eq('application_cycle_id', id);
+    
+      //     if (error) {
+      //       console.error('Error fetching reviewers:', error);
+      //     } else {
+      //       // @ts-expect-error: vercel build
+      //       setReviewers(data);
+      //     }
+      //   };
+    
+      //   fetchReviewers();
+      // }, [id]);
+    
+      // useEffect(() => {
+      //   const fetchApplications = async () => {
+      //     const { data, error } = await supabase
+      //       .from('Application')
+      //       .select('id')
+      //       .eq('application_cycle_id', id);
+    
+      //     if (error) {
+      //       console.error('Error fetching reviewers:', error);
+      //     } else {
+      //       // @ts-expect-error: vercel build
+      //       setApplications(data);
+      //     }
+      //   };
+    
+      //   fetchApplications();
+      // }, [id]);
 
       console.log('Cycle and applications created successfully');
       navigate(`/cycle/${new_cycle_id}`);
