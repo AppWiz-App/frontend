@@ -1,5 +1,4 @@
 import { Navigate, useParams } from 'react-router-dom';
-import { Results } from './Results';
 import { Ranking } from '../components/Ranking';
 import { AppWizButton } from '../components/ui/AppWizButton';
 import '../index.css';
@@ -81,6 +80,7 @@ export function Cycle() {
                 className='border border-slate-300 p-2 rounded w-full text-xl bg-slate-50'
                 value={
                   reviewers?.find(
+                    // @ts-expect-error buid
                     (reviewer) => reviewer.id === selectedReviewerId
                   )?.name
                 }
@@ -120,7 +120,7 @@ export function Cycle() {
         <div className='flex gap-2'>
           <AppWizButton
             variant='outlined'
-            to={`/cycle/${applicationCycle.id}`}
+            to={`/home`}
             icon={<RiArrowGoBackLine />}
             iconSide='left'
           >

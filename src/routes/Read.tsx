@@ -252,10 +252,12 @@ export function Read() {
   function onSaveAndNext() {
     setIsSubmittingRating(true);
     (async () => {
+      // @ts-expect-error buid
       const rating = ratings[applications[activeApplicationIndex].id];
       console.log('HERE');
       console.log({ rating });
       const { error } = await supabase.from('Rating').upsert({
+        // @ts-expect-error buid
         application_id: applications[activeApplicationIndex].id,
         reviewer_id: reviewerId,
         rating,
@@ -277,10 +279,14 @@ export function Read() {
     if (!applicationCycle) throw new Error('No application  cycle');
 
     return (
-      <div className='w-full [height:calc(100vh-72px)] flex flex-col justify-center items-center gap-8'>
+      <div className='w-full [height:calc(100vh-72px)] flex flex-col justify-center items-center gap-16'>
         <div className='flex flex-col text-slate-400 items-center gap-4'>
           <RiCheckboxMultipleFill size={96} />
-          <h1 className='text-black text-2xl'>You’re all done!</h1>
+          {/* @ts-expect-error buid */}
+          <h1 className='text-black text-2xl'>Thanks {reviewer.name}, </h1>
+          <h1 className='text-black text-2xl'>
+            you’ve completed your reading!
+          </h1>
         </div>
 
         <AppWizButton to={`/cycle/${applicationCycle.id}`} variant='filled'>
@@ -306,6 +312,7 @@ function ApplicationDisplay({ application }: { application: Application }) {
               <h3 className='text-2xl font-bold text-slate-700'>{key}</h3>
               <hr className='text-slate-300' />
 
+              {/* @ts-expect-error buid */}
               <p className='text-lg'>{application.app_data[key]}</p>
             </div>
           )

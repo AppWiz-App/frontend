@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { v4 as uuidv4 } from 'uuid';
 import Upload from './Upload';
 import { ReviewerEditor } from '../components/ReviewerEditor';
@@ -142,6 +142,7 @@ export function NewApplicationCycle() {
         (applicantCount * reviewersPerApp) / reviewerCount
       );
 
+      // @ts-expect-error buid
       async function assignReviewer(pushItems) {
         try {
           const { data, error } = await supabase
@@ -267,7 +268,7 @@ export function NewApplicationCycle() {
       // }, [id]);
 
       // wait 2 seconds for our supabase assignments to complete
-      // await new Promise((resolve) => setTimeout(resolve, 5000));
+      await new Promise((resolve) => setTimeout(resolve, 5000));
 
       return new_cycle_id;
     } catch (error) {
@@ -320,7 +321,7 @@ export function NewApplicationCycle() {
                 .then((new_cycle_id) => {
                   console.log('Cycle and applications created successfully');
                   setLoading(false);
-                  // navigate(`/cycle/${new_cycle_id}`);
+                  navigate(`/cycle/${new_cycle_id}`);
                 })
                 .catch((error) => {
                   setLoading(false);

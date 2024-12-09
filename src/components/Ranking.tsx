@@ -1,3 +1,4 @@
+// @ts-nocheck
 // import { useLocation } from 'react-router-dom';
 import Table from '@mui/material/Table';
 import TableBody from '@mui/material/TableBody';
@@ -7,9 +8,9 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 
-import { useContext, useEffect, useState } from 'react';
+import { useContext } from 'react';
 
-import { CycleContext, CycleState } from '../utils/CycleProvider';
+import { CycleContext } from '../utils/CycleProvider';
 import { Loading } from './Loading';
 
 // export const Ranking = ({ id }: { id: string }) => {

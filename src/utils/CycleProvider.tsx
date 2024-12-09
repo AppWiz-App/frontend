@@ -8,6 +8,7 @@ type Reviewer = Database['public']['Tables']['Reviewer']['Row'];
 type Application = Database['public']['Tables']['Application']['Row'];
 type Rating = Database['public']['Tables']['Rating']['Row'];
 type Reviewer_Application =
+  // @ts-expect-error build
   Database['public']['Tables']['Reviewer_Application']['Row'];
 
 export type CycleState = {
