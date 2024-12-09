@@ -23,7 +23,7 @@ export function Customization({
   };
 
   return (
-    <div>
+    <div className='[max-width:600px]'>
       <h3 className='page-header'>Customization</h3>
       <h3 className='page-subheader'>Cycle Name</h3>
       <AppWizTextInput
@@ -34,7 +34,14 @@ export function Customization({
       />
       <h3 className='page-subheader'>Applications</h3>
       <p className='applications-text'>{formState._applicantCount}</p>
+
       <h3 className='page-subheader'>Reviewers Per Application</h3>
+      <p className='applications-per-reader-text mb-8'>
+        This setting controls how many times each applicant should be reviewed.
+        To decrease the effects of biases, the ratings will be averaged when
+        computing the final ranking of the applicants.
+      </p>
+
       <div className='reviewers-container'>
         <button className='minus-button' onClick={decrementReviewersPerApp}>
           -

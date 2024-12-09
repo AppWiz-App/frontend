@@ -6,7 +6,7 @@ import '../index.css';
 import { useEffect, useState } from 'react';
 import { supabase } from '../utils/supabase';
 import * as Dialog from '@radix-ui/react-dialog';
-import { RiCloseFill } from '@remixicon/react';
+import { RiArrowGoBackLine, RiCloseFill } from '@remixicon/react';
 import { Database } from '../../database.types';
 import { Loading } from '../components/Loading';
 import { CycleProvider } from '../utils/CycleProvider';
@@ -116,9 +116,20 @@ export function Cycle() {
       <div className='w-full border bg-slate-50 p-8 flex justify-between items-center'>
         <h1 className='text-3xl text-slate-700'>{applicationCycle.name}</h1>
 
-        <AppWizButton onClick={() => setModalOpen(true)}>
-          Read applications
-        </AppWizButton>
+        <div className='flex gap-2'>
+          <AppWizButton
+            variant='outlined'
+            to={`/cycle/${applicationCycle.id}`}
+            icon={<RiArrowGoBackLine />}
+            iconSide='left'
+          >
+            Back to home
+          </AppWizButton>
+
+          <AppWizButton onClick={() => setModalOpen(true)}>
+            Read applications
+          </AppWizButton>
+        </div>
       </div>
 
       <CycleProvider cycleId={cycleId}>

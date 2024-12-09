@@ -89,15 +89,14 @@ import { Loading } from '../components/Loading';
 // }
 
 export function Ranking() {
-  const { applicationCycle, reviewers, ratings, applications } =
-    useContext(CycleContext);
-  console.log(
-    'HEREEEEE',
-    applicationCycle,
-    reviewers,
-    { ratings },
-    applications
-  );
+  const { ratings, applications } = useContext(CycleContext);
+  // console.log(
+  //   'HEREEEEE',
+  //   applicationCycle,
+  //   reviewers,
+  //   { ratings },
+  //   applications
+  // );
 
   const applicantScores = new Map<number, { total: number; count: number }>();
 
