@@ -75,6 +75,7 @@ export function NewApplicationCycle() {
           name: formState.customizations.name,
           created_by_user_id: user?.id,
         })
+        .limit(1000000)
         .select('*');
       console.log({ cycleData });
 
@@ -94,6 +95,7 @@ export function NewApplicationCycle() {
             application_cycle_id: new_cycle_id,
           }))
         )
+        .limit(1000000)
         .select('*');
       console.log({ reviewerData });
 
@@ -112,6 +114,7 @@ export function NewApplicationCycle() {
             application_cycle_id: new_cycle_id,
           }))
         )
+        .limit(1000000)
         .select('*');
 
       console.log({ applicationData });
@@ -139,14 +142,14 @@ export function NewApplicationCycle() {
         (applicantCount * reviewersPerApp) / reviewerCount
       );
 
-      async function assignReviewer(reviewerId, applicationId) {
+      async function assignReviewer(pushItems) {
         try {
           const { data, error } = await supabase
             .from('Reviewer_Application')
-            .insert({
-              reviewer_id: reviewerId,
-              application_id: applicationId,
-            });
+            .insert(pushItems)
+            .select('*')
+            .limit(1000000);
+          console.log({ 'ERROR HERE': error });
           if (error) {
             console.log('ERROR: ', error);
           }
@@ -165,16 +168,25 @@ export function NewApplicationCycle() {
         const maxApp = ac + applicationsPerReviewer - 1;
         myAssignments.push([ac, Math.min(applicantCount - 1, maxApp)]);
 
+        const pushItems = [];
+
         for (let j = ac; j <= Math.min(applicantCount - 1, maxApp); j++) {
           const applicationId = applicationData[j].id;
           console.log('APPLICATION ID: ', applicationId);
-          assignReviewer(reviewerId, applicationId)
-            .then((assignment) => {
-              console.log('Reviewer assigned:', assignment);
-            })
-            .catch((error) => {
-              console.error('Error assigning reviewer:', error);
-            });
+
+          pushItems.push({
+            reviewer_id: reviewerId,
+            application_id: applicationId,
+          });
+
+          // assignReviewer(reviewerId, applicationId)
+          //   .then((assignment) => {
+          //     console.log('Reviewer assigned:', assignment);
+          //   })
+          //   .catch((error) => {
+          //     console.error('Error assigning reviewer:', error);
+          //   });
+          // await new Promise((resolve) => setTimeout(resolve, 10));
         }
 
         if (maxApp > applicantCount - 1 && i !== reviewerCount - 1) {
@@ -183,13 +195,19 @@ export function NewApplicationCycle() {
           for (let j = 0; j <= maxApp - applicantCount; j++) {
             const applicationId = applicationData[j].id;
             console.log('APPLICATION ID: ', applicationId);
-            assignReviewer(reviewerId, applicationId)
-              .then((assignment) => {
-                console.log('Reviewer assigned:', assignment);
-              })
-              .catch((error) => {
-                console.error('Error assigning reviewer:', error);
-              });
+
+            pushItems.push({
+              reviewer_id: reviewerId,
+              application_id: applicationId,
+            });
+            // assignReviewer(reviewerId, applicationId)
+            //   .then((assignment) => {
+            //     console.log('Reviewer assigned:', assignment);
+            //   })
+            //   .catch((error) => {
+            //     console.error('Error assigning reviewer:', error);
+            //   });
+            // await new Promise((resolve) => setTimeout(resolve, 10));
           }
           console.log('after for loop');
           ac = maxApp - applicantCount + 1;
@@ -198,6 +216,15 @@ export function NewApplicationCycle() {
         } else {
           ac += applicationsPerReviewer;
         }
+
+        console.log({ pushItems });
+        assignReviewer(pushItems)
+          .then((assignment) => {
+            console.log('Reviewer assigned:', assignment);
+          })
+          .catch((error) => {
+            console.error('Error assigning reviewer:', error);
+          });
       }
 
       // console.log("application data: ", applicationData);
@@ -240,7 +267,7 @@ export function NewApplicationCycle() {
       // }, [id]);
 
       // wait 2 seconds for our supabase assignments to complete
-      await new Promise((resolve) => setTimeout(resolve, 2000));
+      // await new Promise((resolve) => setTimeout(resolve, 5000));
 
       return new_cycle_id;
     } catch (error) {
@@ -293,7 +320,7 @@ export function NewApplicationCycle() {
                 .then((new_cycle_id) => {
                   console.log('Cycle and applications created successfully');
                   setLoading(false);
-                  navigate(`/cycle/${new_cycle_id}`);
+                  // navigate(`/cycle/${new_cycle_id}`);
                 })
                 .catch((error) => {
                   setLoading(false);

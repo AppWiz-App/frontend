@@ -14,6 +14,7 @@ export function AppWizProgress({ value, max }: AppWizProgressProps) {
           height: '100%',
           width: `${width}%`,
           background: '#4372AF',
+          borderRadius: '6px',
         }}
       ></div>
     </div>

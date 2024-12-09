@@ -10,6 +10,7 @@ import { RiArrowGoBackLine, RiCloseFill } from '@remixicon/react';
 import { Database } from '../../database.types';
 import { Loading } from '../components/Loading';
 import { CycleProvider } from '../utils/CycleProvider';
+import { ReviewerProgress } from '../components/ReviewerProgress';
 
 type Reviewer = Database['public']['Tables']['Reviewer']['Row'];
 type ApplicationCycle = Database['public']['Tables']['ApplicationCycle']['Row'];
@@ -133,14 +134,12 @@ export function Cycle() {
       </div>
 
       <CycleProvider cycleId={cycleId}>
-        <div className='grid grid-cols-2'>
+        <div className='grid grid-cols-2 p-6 gap-8'>
           <div>
             <h3 className='page-header'>Reviewers</h3>
-            <ul className='pl-8'>
-              {reviewers?.map((reviewer) => {
-                return <li key={reviewer.id}>{reviewer.name}</li>;
-              })}
-            </ul>
+            <div className='p-8'>
+              <ReviewerProgress />
+            </div>
           </div>
 
           <div>
@@ -151,8 +150,6 @@ export function Cycle() {
           </div>
         </div>
       </CycleProvider>
-
-      {/* <Results id={cycleId} /> */}
     </div>
   );
 }

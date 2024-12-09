@@ -124,29 +124,31 @@ export function Ranking() {
   applicantAverages.sort((a, b) => b.average - a.average);
 
   return (
-    <TableContainer component={Paper}>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell>Applicant</TableCell>
-            <TableCell>Average rating</TableCell>
-            <TableCell>Number of ratings</TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {applicantAverages.map(({ applicant_id, average, count }) => (
-            <TableRow key={applicant_id}>
-              <TableCell>
-                {applications?.find(
-                  (application) => application.id === applicant_id
-                )?.app_data?.Name ?? applicant_id}
-              </TableCell>
-              <TableCell>{average?.toFixed(1) ?? 'No ratings'}</TableCell>
-              <TableCell>{count ? count : 'No ratings'}</TableCell>
+    <div className='[font-size:24px_!important]'>
+      <TableContainer component={Paper}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell>Applicant</TableCell>
+              <TableCell>Average rating</TableCell>
+              <TableCell>Number of ratings</TableCell>
             </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </TableContainer>
+          </TableHead>
+          <TableBody>
+            {applicantAverages.map(({ applicant_id, average, count }) => (
+              <TableRow key={applicant_id}>
+                <TableCell>
+                  {applications?.find(
+                    (application) => application.id === applicant_id
+                  )?.app_data?.Name ?? applicant_id}
+                </TableCell>
+                <TableCell>{average?.toFixed(1) ?? 'No ratings'}</TableCell>
+                <TableCell>{count ? count : 'No ratings'}</TableCell>
+              </TableRow>
+            ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
+    </div>
   );
 }
