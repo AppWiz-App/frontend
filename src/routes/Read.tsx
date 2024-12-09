@@ -12,10 +12,10 @@ import {
   RiCheckboxMultipleFill,
   RiLoader2Line,
 } from '@remixicon/react';
-import * as Progress from '@radix-ui/react-progress';
 
 import { Loading } from '../components/Loading';
 import { Database } from '../../database.types';
+import { AppWizProgress } from '../components/ui/AppWizProgress';
 
 type ApplicationCycle = Database['public']['Tables']['ApplicationCycle']['Row'];
 type Reviewer = Database['public']['Tables']['Reviewer']['Row'];
@@ -141,7 +141,7 @@ export function Read() {
 
   return (
     <div className='[height:calc(100vh-72px)] flex flex-col'>
-      <div className='w-full border bg-slate-50 p-8 flex justify-between items-center'>
+      <div className='w-full border border-slate-300 bg-slate-100 p-8 flex justify-between items-center'>
         <h1 className='text-3xl text-slate-700 truncate text-ellipsis'>
           Reading <b>{applicationCycle.name}</b> Applications as{' '}
           <b>{reviewer.name}</b>
@@ -157,14 +157,16 @@ export function Read() {
         </AppWizButton>
       </div>
 
-      <div className='grid [grid-template-columns:3fr_1fr] flex-grow'>
-        <div className='p-8 w-96'>
-          {JSON.stringify(applications[activeApplicationIndex])}
+      <div className='grid [grid-template-columns:3fr_1fr] flex-grow overflow-scroll'>
+        <div className='p-8 break-words overflow-x-hidden overflow-y-scroll'>
+          <ApplicationDisplay
+            appData={applications[activeApplicationIndex].app_data}
+          />
         </div>
 
-        <div className='bg-slate-50 border-l p-8'>
-          <h3 className='text-xl font-bold text-slate-700'>Your rating</h3>
-          <p className='my-4'>1 is worst, 5 is best.</p>
+        <div className='bg-slate-100 border-l border-slate-300  p-8'>
+          <h3 className='text-2xl font-bold text-slate-700'>Your rating</h3>
+          <p className='my-4 text-lg'>1 is worst, 5 is best.</p>
 
           <div className='flex gap-1'>
             {Array(5)
@@ -184,7 +186,7 @@ export function Read() {
                         applications[activeApplicationIndex].id
                       )
                     }
-                    className='w-12'
+                    className='w-12 text-xl'
                   >
                     {thisRating}
                   </AppWizButton>
@@ -194,9 +196,9 @@ export function Read() {
         </div>
       </div>
 
-      <div className='w-full border bg-slate-50 p-8 flex flex-col gap-4'>
+      <div className='w-full border border-slate-300 bg-slate-100 p-8 flex flex-col gap-4'>
         <div className='flex justify-between items-center'>
-          <p className='text-xl'>
+          <p className='text-2xl'>
             Application <b>{activeApplicationIndex + 1}</b> of{' '}
             <b>{assignedCount}</b>
           </p>
@@ -208,7 +210,7 @@ export function Read() {
               iconSide='left'
               variant='outlined'
               size='m'
-              disabled={activeApplicationIndex === 0}
+              disabled={activeApplicationIndex === 0 || isSubmittingRating}
             >
               Previous
             </AppWizButton>
@@ -236,13 +238,7 @@ export function Read() {
           </div>
         </div>
 
-        <Progress.Root
-          value={activeApplicationIndex}
-          max={assignedCount}
-          className='w-full h-4 bg-gray-200 rounded'
-        >
-          <Progress.Indicator className='bg-slate-600 h-full rounded' />
-        </Progress.Root>
+        <AppWizProgress value={activeApplicationIndex} max={assignedCount} />
       </div>
     </div>
   );
@@ -297,4 +293,24 @@ export function Read() {
       </div>
     );
   }
+}
+
+function ApplicationDisplay({ appData }: { appData: Application['app_data'] }) {
+  if (!appData) return null;
+
+  return (
+    <div className='flex flex-col gap-8 p-4'>
+      {Object.keys(appData).map(
+        (key) =>
+          key && (
+            <div className='flex flex-col gap-4'>
+              <h3 className='text-2xl font-bold text-slate-700'>{key}</h3>
+              <hr className='text-slate-300' />
+
+              <p className='text-lg'>{appData[key]}</p>
+            </div>
+          )
+      )}
+    </div>
+  );
 }
