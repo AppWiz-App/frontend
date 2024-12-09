@@ -78,6 +78,9 @@ export function Cycle() {
                   setSelectedReviewerId(e.target.value);
                 }}
               >
+                {!selectedReviewerId && (
+                  <option value=''>Select a reviewer</option>
+                )}
                 {reviewers?.map((reviewer) => (
                   <option key={reviewer.id} value={reviewer.id}>
                     {reviewer.name}
@@ -91,6 +94,7 @@ export function Cycle() {
               <AppWizButton
                 to={`/cycle/${cycleId}/read/${selectedReviewerId}`}
                 className='w-full'
+                disabled={!selectedReviewerId}
               >
                 Continue to reading
               </AppWizButton>

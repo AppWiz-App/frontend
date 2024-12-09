@@ -1,7 +1,7 @@
 import { createContext, useEffect, useState } from 'react';
 import { supabase } from '../supabase';
 import { Session, User } from '@supabase/supabase-js';
-import Logo from '../../assets/LogoBlack.svg';
+import { Loading } from '../../components/Loading';
 
 export type AuthState = { session: Session | null; user: User | null };
 
@@ -38,13 +38,5 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     <Loading />
   ) : (
     <AuthContext.Provider value={authState}>{children}</AuthContext.Provider>
-  );
-}
-
-function Loading() {
-  return (
-    <div className='h-full flex flex-col justify-center items-center gap-8 opacity-50'>
-      <Logo />
-    </div>
   );
 }

@@ -4,60 +4,137 @@ import { useParams } from 'react-router-dom';
 import { supabase } from '../utils/supabase';
 import { AppWizButton } from '../components/ui/AppWizButton';
 import {
+  RiArrowGoBackLine,
   RiArrowLeftLine,
   RiArrowRightLine,
-  RiHome2Fill,
   RiHome2Line,
 } from '@remixicon/react';
 import * as Progress from '@radix-ui/react-progress';
 
+import { Loading } from '../components/Loading';
+import { Database } from '../../database.types';
+
+type ApplicationCycle = Database['public']['Tables']['ApplicationCycle']['Row'];
+type Reviewer = Database['public']['Tables']['Reviewer']['Row'];
+type Application = Database['public']['Tables']['Application']['Row'];
+
 export function Read() {
   const { id, reviewerId } = useParams();
-  console.log('id', id);
+
   const [rating, setRating] = useState<number | null>(null);
-  const [applicationData, setApplicationData] = useState(null);
+  const [applicationCycle, setApplicationCycle] =
+    useState<ApplicationCycle | null>(null);
+  const [reviewer, setReviewer] = useState<Reviewer | null>(null);
 
-  const [data, setData] = useState(null);
+  const [activeApplicationIndex, setActiveApplicationIndex] = useState<
+    number | undefined
+  >();
+  const [assignedCount, setAssignedCount] = useState<number | undefined>();
+  const [applications, setApplications] = useState<Application[]>();
 
-  async function findUser() {
-    // const { data, error } = await supabase.auth.admin.getUserById(id);
+  useEffect(() => {
+    (async () => {
+      const { data: cycleData, error: cycleError } = await supabase
+        .from('ApplicationCycle')
+        .select('*')
+        .eq('id', id)
+        .single();
 
-    const { cycleData: ApplicationCycle, error } = await supabase
-      .from('ApplicationCycle')
-      .select('*');
-    console.log(cycleData);
+      if (cycleError) {
+        console.error('Error fetching application data:', cycleError);
+      } else {
+        setApplicationCycle(cycleData);
+      }
 
-    const { data: reviewerData, error: reviewerError } = await supabase
-      .from('Reviewer')
-      .select('Reviewer.name')
-      .eq('Reviewer.id', reviewerId);
-    console.log(data);
-    console.log(error);
-  }
+      const { data: reviewerData, error: reviewerError } = await supabase
+        .from('Reviewer')
+        .select('*')
+        .eq('id', reviewerId)
+        .single();
 
-  findUser();
+      if (reviewerError) {
+        console.error('Error fetching application data:', reviewerError);
+      } else {
+        setReviewer(reviewerData);
+      }
+
+      const { data: ratingData, error: ratingError } = await supabase
+        .from('Rating')
+        .select('*')
+        .eq('reviewer_id', reviewerId);
+
+      if (ratingError) {
+        console.error('Error fetching ratings:', ratingError);
+      } else {
+        console.log(ratingData);
+        setActiveApplicationIndex(ratingData.length);
+      }
+
+      const { data: reviewerApplications, error: reviewerApplicationsError } =
+        await supabase
+          .from('Reviewer_Application')
+          .select('application_id')
+          .eq('reviewer_id', reviewerId);
+
+      if (reviewerApplicationsError) {
+        console.error(
+          'Error fetching reviewer applications:',
+          reviewerApplicationsError
+        );
+      }
+
+      if (!reviewerApplications) return;
+      const applicationIds = reviewerApplications.map(
+        (ra) => ra.application_id
+      );
+      setAssignedCount(applicationIds.length);
+
+      const { data: applications, error: applicationsError } = await supabase
+        .from('Application')
+        .select('*')
+        .in('id', applicationIds);
+
+      if (applicationsError) {
+        console.error('Error fetching applications:', applicationsError);
+      } else {
+        console.log(applications);
+        setApplications(applications);
+      }
+    })();
+  }, [id, reviewerId]);
+
+  if (
+    !applicationCycle ||
+    !reviewer ||
+    activeApplicationIndex === undefined ||
+    !applications
+  )
+    return <Loading />;
 
   return (
     <div className='[height:calc(100vh-72px)] flex flex-col'>
       <div className='w-full border bg-slate-50 p-8 flex justify-between items-center'>
         <h1 className='text-3xl text-slate-700'>
-          Reading <b>MHacks 2024</b> Applications as <b>Peter Parker</b>
+          Reading <b>{applicationCycle.name}</b> Applications as{' '}
+          <b>{reviewer.name}</b>
         </h1>
 
         <AppWizButton
           variant='outlined'
           to='/home'
-          icon={<RiHome2Line />}
+          icon={<RiArrowGoBackLine />}
           iconSide='left'
         >
-          Go home
+          Exit reading
         </AppWizButton>
       </div>
 
       <div className='grid [grid-template-columns:3fr_1fr] flex-grow'>
-        <div className='p-8'>Application details</div>
+        <div className='p-8'>
+          {applications.map((app) => JSON.stringify(app))}
+        </div>
 
-        <div className='bg-slate--50 border-l p-8'>
+        <div className='bg-slate-50 border-l p-8'>
           <h3 className='text-xl font-bold text-slate-700'>Your rating</h3>
           <p className='my-4'>1 is worst, 5 is best.</p>
 
@@ -69,7 +146,9 @@ export function Read() {
                 return (
                   <AppWizButton
                     variant={rating == thisRating ? 'filled' : 'outlined'}
-                    onClick={() => setRating(thisRating)}
+                    onClick={() =>
+                      setRating(rating === thisRating ? null : thisRating)
+                    }
                     className='w-12'
                   >
                     {thisRating}
@@ -80,38 +159,43 @@ export function Read() {
         </div>
       </div>
 
-      <div className='w-full border bg-slate-50 p-8 flex justify-between items-center'>
-        <p className='text-xl'>
-          Application <b>11</b> of <b>30</b>
-        </p>
+      <div className='w-full border bg-slate-50 p-8 flex flex-col gap-4'>
+        <div className='flex justify-between items-center'>
+          <p className='text-xl'>
+            Application <b>{activeApplicationIndex + 1}</b> of{' '}
+            <b>{assignedCount}</b>
+          </p>
+
+          <div className='flex gap-2'>
+            <AppWizButton
+              icon={<RiArrowLeftLine />}
+              onClick={() => alert('todo')}
+              iconSide='left'
+              variant='outlined'
+              size='m'
+              disabled={activeApplicationIndex === 0}
+            >
+              Previous
+            </AppWizButton>
+
+            <AppWizButton
+              icon={<RiArrowRightLine />}
+              onClick={() => alert('todo')}
+              size='m'
+              disabled={rating === null}
+            >
+              Save and next
+            </AppWizButton>
+          </div>
+        </div>
 
         <Progress.Root
-          value={11}
-          max={30}
+          value={activeApplicationIndex}
+          max={assignedCount}
           className='w-full h-4 bg-gray-200 rounded'
         >
           <Progress.Indicator className='bg-slate-600 h-full' />
         </Progress.Root>
-
-        <div className='flex gap-2'>
-          <AppWizButton
-            icon={<RiArrowLeftLine />}
-            onClick={() => alert('todo')}
-            iconSide='left'
-            variant='outlined'
-            size='m'
-          >
-            Previous
-          </AppWizButton>
-
-          <AppWizButton
-            icon={<RiArrowRightLine />}
-            onClick={() => alert('todo')}
-            size='m'
-          >
-            Save and next
-          </AppWizButton>
-        </div>
       </div>
     </div>
   );
