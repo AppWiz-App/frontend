@@ -17,9 +17,11 @@ export default function App() {
 function AuthUI() {
   return (
     <div className='mt-32 w-96 max-w-full mx-auto px-4 flex flex-col justify-center items-center gap-8'>
-      <Link to='/'>
-        <LogoBlack />
-      </Link>
+      <div className='[transform:scale(2)] mb-8'>
+        <Link to='/'>
+          <LogoBlack />
+        </Link>
+      </div>
 
       <Auth providers={[]} supabaseClient={supabase} />
     </div>

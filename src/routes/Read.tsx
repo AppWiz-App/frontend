@@ -17,11 +17,15 @@ import { Database } from '../../database.types';
 type ApplicationCycle = Database['public']['Tables']['ApplicationCycle']['Row'];
 type Reviewer = Database['public']['Tables']['Reviewer']['Row'];
 type Application = Database['public']['Tables']['Application']['Row'];
+type Rating = Database['public']['Tables']['Rating']['Insert'];
+
+type RatingObj = {
+  numeric: number;
+};
 
 export function Read() {
   const { id, reviewerId } = useParams();
 
-  const [rating, setRating] = useState<number | null>(null);
   const [applicationCycle, setApplicationCycle] =
     useState<ApplicationCycle | null>(null);
   const [reviewer, setReviewer] = useState<Reviewer | null>(null);
@@ -31,6 +35,8 @@ export function Read() {
   >();
   const [assignedCount, setAssignedCount] = useState<number | undefined>();
   const [applications, setApplications] = useState<Application[]>();
+  const [ratings, setRatings] =
+    useState<Record<Application['id'], RatingObj>>();
 
   useEffect(() => {
     (async () => {
@@ -61,12 +67,18 @@ export function Read() {
       const { data: ratingData, error: ratingError } = await supabase
         .from('Rating')
         .select('*')
-        .eq('reviewer_id', reviewerId);
-
+        .eq('reviewer_id', reviewerId)
+        .order('application_id');
       if (ratingError) {
         console.error('Error fetching ratings:', ratingError);
       } else {
-        console.log(ratingData);
+        console.log({ ratingData });
+        const ratingRecord = ratingData.reduce((acc, rating) => {
+          acc[rating.application_id] = { numeric: rating.rating };
+          return acc;
+        }, {});
+        setRatings(ratingRecord);
+        console.log({ ratingRecord });
         setActiveApplicationIndex(ratingData.length);
       }
 
@@ -92,8 +104,8 @@ export function Read() {
       const { data: applications, error: applicationsError } = await supabase
         .from('Application')
         .select('*')
-        .in('id', applicationIds);
-
+        .in('id', applicationIds)
+        .order('id');
       if (applicationsError) {
         console.error('Error fetching applications:', applicationsError);
       } else {
@@ -107,9 +119,13 @@ export function Read() {
     !applicationCycle ||
     !reviewer ||
     activeApplicationIndex === undefined ||
-    !applications
+    !applications ||
+    ratings === undefined
   )
     return <Loading />;
+
+  const activeApplicationRating =
+    ratings[applications[activeApplicationIndex].id];
 
   return (
     <div className='[height:calc(100vh-72px)] flex flex-col'>
@@ -130,8 +146,8 @@ export function Read() {
       </div>
 
       <div className='grid [grid-template-columns:3fr_1fr] flex-grow'>
-        <div className='p-8'>
-          {applications.map((app) => JSON.stringify(app))}
+        <div className='p-8 w-96'>
+          {JSON.stringify(applications[activeApplicationIndex])}
         </div>
 
         <div className='bg-slate-50 border-l p-8'>
@@ -145,9 +161,16 @@ export function Read() {
                 const thisRating = i + 1;
                 return (
                   <AppWizButton
-                    variant={rating == thisRating ? 'filled' : 'outlined'}
+                    variant={
+                      activeApplicationRating?.numeric === thisRating
+                        ? 'filled'
+                        : 'outlined'
+                    }
                     onClick={() =>
-                      setRating(rating === thisRating ? null : thisRating)
+                      onRatingChange(
+                        Number(thisRating),
+                        applications[activeApplicationIndex].id
+                      )
                     }
                     className='w-12'
                   >
@@ -169,7 +192,7 @@ export function Read() {
           <div className='flex gap-2'>
             <AppWizButton
               icon={<RiArrowLeftLine />}
-              onClick={() => alert('todo')}
+              onClick={() => setActiveApplicationIndex((prev) => prev! - 1)}
               iconSide='left'
               variant='outlined'
               size='m'
@@ -180,9 +203,9 @@ export function Read() {
 
             <AppWizButton
               icon={<RiArrowRightLine />}
-              onClick={() => alert('todo')}
+              onClick={() => setActiveApplicationIndex((prev) => prev! + 1)}
               size='m'
-              disabled={rating === null}
+              disabled={activeApplicationRating === undefined}
             >
               Save and next
             </AppWizButton>
@@ -199,4 +222,8 @@ export function Read() {
       </div>
     </div>
   );
+
+  function onRatingChange(rating: number, applicationId: number) {
+    setRatings((prev) => ({ ...prev, [applicationId]: { numeric: rating } }));
+  }
 }

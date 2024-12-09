@@ -6,13 +6,11 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../utils/supabase';
 import * as Dialog from '@radix-ui/react-dialog';
 import { RiCloseFill } from '@remixicon/react';
+import { Database } from '../../database.types';
+import { Loading } from '../components/Loading';
 
-type Reviewer = {
-  id: string;
-  name: string;
-  email: string;
-  application_cycle_id: string;
-};
+type Reviewer = Database['public']['Tables']['Reviewer']['Row'];
+type ApplicationCycle = Database['public']['Tables']['ApplicationCycle']['Row'];
 
 export function Cycle() {
   const { id: cycleId } = useParams();
@@ -22,11 +20,13 @@ export function Cycle() {
   const [selectedReviewerId, setSelectedReviewerId] = useState<
     string | undefined
   >();
+  const [applicationCycle, setApplicationCycle] =
+    useState<ApplicationCycle | null>(null);
 
   useEffect(() => {
     if (!cycleId) return;
 
-    const fetchReviewers = async () => {
+    (async () => {
       const { data, error } = await supabase
         .from('Reviewer')
         .select('*')
@@ -37,21 +37,29 @@ export function Cycle() {
       } else {
         setReviewers(data);
       }
-    };
 
-    fetchReviewers();
+      const { data: cycleData, error: cycleError } = await supabase
+        .from('ApplicationCycle')
+        .select('*')
+        .eq('id', cycleId)
+        .single();
+
+      if (cycleError) {
+        console.error('Error fetching application data:', cycleError);
+      } else {
+        setApplicationCycle(cycleData);
+      }
+    })();
   }, [cycleId]);
 
   if (!cycleId) {
     return <Navigate to='/home' replace={true} />;
   }
 
-  console.log(
-    reviewers?.find((reviewer) => reviewer.id === selectedReviewerId)?.id
-  );
+  if (!applicationCycle) return <Loading />;
 
   return (
-    <div className='p-12'>
+    <div>
       <Dialog.Root open={modalOpen}>
         <Dialog.Portal>
           <Dialog.Overlay className='bg-black opacity-50 fixed inset-0' />
@@ -102,17 +110,33 @@ export function Cycle() {
           </Dialog.Content>
         </Dialog.Portal>
       </Dialog.Root>
-      <AppWizButton onClick={() => setModalOpen(true)}>
-        Read applications
-      </AppWizButton>
 
-      <div>
-        <h3 className='page-header'>Reviewers</h3>
-        <ul className='pl-8'>
-          {reviewers?.map((reviewer) => {
-            return <li key={reviewer.id}>{reviewer.name}</li>;
-          })}
-        </ul>
+      <div className='w-full border bg-slate-50 p-8 flex justify-between items-center'>
+        <h1 className='text-3xl text-slate-700'>{applicationCycle.name}</h1>
+
+        <AppWizButton onClick={() => setModalOpen(true)}>
+          Read applications
+        </AppWizButton>
+      </div>
+
+      <div className='grid grid-cols-2'>
+        <div>
+          <h3 className='page-header'>Reviewers</h3>
+          <ul className='pl-8'>
+            {reviewers?.map((reviewer) => {
+              return <li key={reviewer.id}>{reviewer.name}</li>;
+            })}
+          </ul>
+        </div>
+
+        <div>
+          <h3 className='page-header'>Applicant ranking</h3>
+          <ul className='pl-8'>
+            {reviewers?.map((reviewer) => {
+              return <li key={reviewer.id}>{reviewer.name}</li>;
+            })}
+          </ul>
+        </div>
       </div>
 
       <Results id={cycleId} />

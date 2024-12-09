@@ -36,6 +36,7 @@ import { useEffect, useState } from 'react';
 // };
 
 export function Results({ id }: { id: string }) {
+  return null;
   const [reviewers, setReviewers] = useState(null);
   const [appData, setAppData] = useState(null);
   const [applicationCycle, setApplicationCycle] = useState(null);
@@ -77,7 +78,6 @@ export function Results({ id }: { id: string }) {
     fetchReviewers();
   }, [id]);
 
-
   useEffect(() => {
     const fetchAppData = async () => {
       const { data, error } = await supabase
@@ -96,9 +96,7 @@ export function Results({ id }: { id: string }) {
     fetchAppData();
   }, [id]);
 
-  console.log("app data: ", appData);
-
-  
+  console.log('app data: ', appData);
 
   if (!reviewers || !applicationCycle) {
     return <div>Loading...</div>;
@@ -135,7 +133,7 @@ export function Results({ id }: { id: string }) {
     myAssignments.push([ac, Math.min(applicantCount - 1, maxApp)]);
 
     if (maxApp > applicantCount - 1 && i !== reviewerCount - 1) {
-      myAssignments.push([0, maxApp - applicantCount]); 
+      myAssignments.push([0, maxApp - applicantCount]);
       ac = maxApp - applicantCount + 1;
     } else if (maxApp === applicantCount - 1) {
       ac = 0;
@@ -148,17 +146,14 @@ export function Results({ id }: { id: string }) {
   }
   const assignmentMap = [];
 
-async function insertData() {    
-  
-  // const { data, error } = await supabase
-  //   .from('Reviewer_Application')
-  //   .insert([
-  //     { TestColumn: 1 },
-  //   ])
-  //   .select()
-            
-        
-  /*
+  async function insertData() {
+    // const { data, error } = await supabase
+    //   .from('Reviewer_Application')
+    //   .insert([
+    //     { TestColumn: 1 },
+    //   ])
+    //   .select()
+    /*
   const { data, error } = await supabase
   .from('Reviewer_Application')
   .insert({
@@ -167,10 +162,10 @@ async function insertData() {
   })
   .select();
   */
-}
+  }
 
-insertData();
-        
+  insertData();
+
   for (let i = 0; i < reviewerCount; i++) {
     const newMapping = [];
     // @ts-expect-error: vercel build
