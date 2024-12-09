@@ -131,7 +131,7 @@ export function Read() {
   return (
     <div className='[height:calc(100vh-72px)] flex flex-col'>
       <div className='w-full border bg-slate-50 p-8 flex justify-between items-center'>
-        <h1 className='text-3xl text-slate-700'>
+        <h1 className='text-3xl text-slate-700 truncate text-ellipsis'>
           Reading <b>{applicationCycle.name}</b> Applications as{' '}
           <b>{reviewer.name}</b>
         </h1>
