@@ -149,20 +149,17 @@ export function Read() {
 
         <AppWizButton
           variant='outlined'
-          to='/home'
+          to={`/cycle/${applicationCycle.id}`}
           icon={<RiArrowGoBackLine />}
           iconSide='left'
         >
           Exit reading
         </AppWizButton>
       </div>
-
       <div className='grid [grid-template-columns:3fr_1fr] flex-grow overflow-scroll'>
-        <div className='p-8 break-words overflow-x-hidden overflow-y-scroll'>
-          <ApplicationDisplay
-            appData={applications[activeApplicationIndex].app_data}
-          />
-        </div>
+        <ApplicationDisplay
+          application={applications[activeApplicationIndex]}
+        />
 
         <div className='bg-slate-100 border-l border-slate-300  p-8'>
           <h3 className='text-2xl font-bold text-slate-700'>Your rating</h3>
@@ -195,7 +192,6 @@ export function Read() {
           </div>
         </div>
       </div>
-
       <div className='w-full border border-slate-300 bg-slate-100 p-8 flex flex-col gap-4'>
         <div className='flex justify-between items-center'>
           <p className='text-2xl'>
@@ -295,19 +291,22 @@ export function Read() {
   }
 }
 
-function ApplicationDisplay({ appData }: { appData: Application['app_data'] }) {
-  if (!appData) return null;
+function ApplicationDisplay({ application }: { application: Application }) {
+  if (!application.app_data) return null;
 
   return (
-    <div className='flex flex-col gap-8 p-4'>
-      {Object.keys(appData).map(
+    <div
+      className='flex flex-col gap-8 p-12 break-words overflow-x-hidden'
+      key={application.id}
+    >
+      {Object.keys(application.app_data).map(
         (key) =>
           key && (
             <div className='flex flex-col gap-4'>
               <h3 className='text-2xl font-bold text-slate-700'>{key}</h3>
               <hr className='text-slate-300' />
 
-              <p className='text-lg'>{appData[key]}</p>
+              <p className='text-lg'>{application.app_data[key]}</p>
             </div>
           )
       )}
