@@ -4,7 +4,7 @@ import { Link } from 'react-router-dom';
 
 export default function Header() {
   return (
-    <div className='header'>
+    <div className='header sticky top-0'>
       <div className='logo'>
         <Link to='/home'>
           <Logo />

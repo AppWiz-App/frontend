@@ -133,13 +133,10 @@ export function Cycle() {
           </div>
 
           <div>
-            <Ranking id={cycleId} />
             <h3 className='page-header'>Applicant Ranking</h3>
-            <ul className='pl-8'>
-              {reviewers?.map((reviewer) => {
-                return <li key={reviewer.id}>{reviewer.name}</li>;
-              })}
-            </ul>
+            <div className='p-8'>
+              <Ranking />
+            </div>
           </div>
         </div>
       </CycleProvider>
