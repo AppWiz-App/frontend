@@ -9,6 +9,7 @@ import * as Dialog from '@radix-ui/react-dialog';
 import { RiCloseFill } from '@remixicon/react';
 import { Database } from '../../database.types';
 import { Loading } from '../components/Loading';
+import { CycleProvider } from '../utils/CycleProvider';
 
 type Reviewer = Database['public']['Tables']['Reviewer']['Row'];
 type ApplicationCycle = Database['public']['Tables']['ApplicationCycle']['Row'];
@@ -120,28 +121,30 @@ export function Cycle() {
         </AppWizButton>
       </div>
 
-      <div className='grid grid-cols-2'>
-        <div>
-          <h3 className='page-header'>Reviewers</h3>
-          <ul className='pl-8'>
-            {reviewers?.map((reviewer) => {
-              return <li key={reviewer.id}>{reviewer.name}</li>;
-            })}
-          </ul>
-        </div>
-        
-        <div>
-          <Ranking id={cycleId}/>
-          <h3 className='page-header'>Applicant Ranking</h3>
-          <ul className='pl-8'>
-            {reviewers?.map((reviewer) => {
-              return <li key={reviewer.id}>{reviewer.name}</li>;
-            })}
-          </ul>
-        </div>
-      </div>
+      <CycleProvider cycleId={cycleId}>
+        <div className='grid grid-cols-2'>
+          <div>
+            <h3 className='page-header'>Reviewers</h3>
+            <ul className='pl-8'>
+              {reviewers?.map((reviewer) => {
+                return <li key={reviewer.id}>{reviewer.name}</li>;
+              })}
+            </ul>
+          </div>
 
-      <Results id={cycleId} />
+          <div>
+            <Ranking id={cycleId} />
+            <h3 className='page-header'>Applicant Ranking</h3>
+            <ul className='pl-8'>
+              {reviewers?.map((reviewer) => {
+                return <li key={reviewer.id}>{reviewer.name}</li>;
+              })}
+            </ul>
+          </div>
+        </div>
+      </CycleProvider>
+
+      {/* <Results id={cycleId} /> */}
     </div>
   );
 }

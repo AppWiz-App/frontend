@@ -10,7 +10,11 @@ export function AppWizProgress({ value, max }: AppWizProgressProps) {
   return (
     <div className='w-full h-6 bg-white border border-slate-300 rounded-md'>
       <div
-        style={{ height: '100%', width: `${width}%`, background: '#4372AF' }}
+        style={{
+          height: '100%',
+          width: `${width}%`,
+          background: '#4372AF',
+        }}
       ></div>
     </div>
   );

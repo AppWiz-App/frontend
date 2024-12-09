@@ -41,6 +41,7 @@ const INITIAL_FORM_STATE: FormState = {
   reviewers: [{ name: '', email: '', id: uuidv4() }],
   customizations: {
     name: '',
+    // fixme: bug, this should be reduced if #reviewers is less than 3
     reviewersPerApp: 3,
   },
   // metadata
